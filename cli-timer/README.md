@@ -1,5 +1,5 @@
 # CLI Timer
-A simple CLI timer built with Clique. Currently only supports Window machines.
+A simple CLI timer built with Clique. Currently only supports Windows machines.
 
 ## Setup
 1. Build the module
@@ -41,14 +41,14 @@ The config file lives at `C:\.cli-timer\config.json`. Edit it to customize your 
 {
   "time": {
     "hours": "1",
-    "minutes": "0",
-    "seconds": "0"
+    "minutes": "59",
+    "seconds": "59"
   },
   "audioPath": "path_to_your_audio_file",
   "title": "Live Timer"
 }
 ```
 
-- **Time** — Hours, minutes, and seconds for your timer. Note that minutes and seconds cannot exceed 60
+- **Time** — Hours, minutes, and seconds for your timer. Note that minutes and seconds cannot exceed 59
 - **Title** — The title displayed at the top of your timer
 - **Audio Path** — Audio file to play when the timer completes. Can be left blank for no audio

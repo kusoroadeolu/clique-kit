@@ -74,10 +74,10 @@ public class Clock implements Component {
     }
 
     void verifyTime(){
-         if (minutes > 60){
+         if (minutes > 59){
             Clique.parser().print("[ctp_red, bold] Minutes given cannot be greater than 60");
             clearTime();
-        }else if(seconds > 60){
+        }else if(seconds > 59){
             Clique.parser().print("[ctp_red, bold] Seconds given cannot be greater than 60");
             clearTime();
         }

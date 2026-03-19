@@ -9,8 +9,8 @@ import java.io.IOException;
 
 public class SoundPlayer {
     public static void playSound(String audioFPath){
-            try(var fis = new FileInputStream(audioFPath)) {
-                if (audioFPath.isBlank()) return;
+        if (audioFPath.isBlank()) return;
+        try(var fis = new FileInputStream(audioFPath)) {
                 Player player = new Player(fis);
                 player.play();
             } catch (IOException | JavaLayerException e) {
