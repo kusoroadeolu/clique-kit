@@ -1,4 +1,4 @@
-package io.github.kusoroadeolu.timer;
+package io.github.kusoroadeolu.cliquekit.timer;
 
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.frame.Frame;
@@ -6,15 +6,15 @@ import io.github.kusoroadeolu.clique.frame.Frame;
 public class LiveRenderer {
     private final Frame frame;
     private final Clock clock;
+    private final String title;
 
-    public LiveRenderer(int width, Time time) {
-        this.frame = Clique
-                .frame()
-                .width(width);
-        clock = new Clock(time);
-    }
-
-    public LiveRenderer(Time time){
+    public LiveRenderer(Configuration config){
+        var time = config.time();
+        title = config.title();
+        if (time == null){
+            Clique.parser().print("[ctp_red]Failed to read [bold] time [/] values from config file");
+            time = Time.DEFAULT;
+        }
         this.frame = Clique
                 .frame();
 
@@ -23,14 +23,14 @@ public class LiveRenderer {
 
 
     public void render() throws InterruptedException {
-        frame.title("[ctp_mauve]Pomo Timer[/]")
+        frame.title("[ctp_mauve] %s [/]".formatted(title))
                 .nest(clock);
 
         int lastSize = 0;
         while (!clock.isDone()) {
             if (lastSize > 0) System.out.print("\033[" + lastSize + "A");
 
-            String rendered = frame.get();
+            var rendered = frame.get();
             var lines = rendered.lines().toList();
             for (var line : lines) System.out.println("\r" + line);
             lastSize = lines.size();
