@@ -3,7 +3,7 @@ package io.github.kusoroadeolu.cliquekit.parser.theme;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.spi.AnsiCode;
 
-public class NordSyntaxTheme implements SyntaxTheme {
+class NordSyntaxTheme implements SyntaxTheme {
 
     private static final AnsiCode KEYWORD        = Clique.rgb(129, 161, 193); // nord_frost2
     private static final AnsiCode STRING         = Clique.rgb(163, 190, 140); // nord_green

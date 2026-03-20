@@ -3,7 +3,7 @@ package io.github.kusoroadeolu.cliquekit.parser.theme;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.spi.AnsiCode;
 
-public class CatppuccinMochaSyntaxTheme implements SyntaxTheme {
+class CatppuccinMochaSyntaxTheme implements SyntaxTheme {
 
     private static final AnsiCode KEYWORD        = Clique.rgb(203, 166, 247); // ctp_mauve
     private static final AnsiCode STRING         = Clique.rgb(166, 227, 161); // ctp_green

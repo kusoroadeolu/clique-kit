@@ -9,8 +9,8 @@ import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
 import io.github.kusoroadeolu.clique.spi.AnsiCode;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
-import io.github.kusoroadeolu.cliquekit.parser.theme.DefaultSyntaxTheme;
 import io.github.kusoroadeolu.cliquekit.parser.theme.SyntaxTheme;
+import io.github.kusoroadeolu.cliquekit.parser.theme.SyntaxThemes;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +24,7 @@ public class JavaSyntaxParser implements AnsiStringParser {
     private final SyntaxTheme theme;
 
     public JavaSyntaxParser() {
-        this(new DefaultSyntaxTheme());
+        this(SyntaxThemes.DEFAULT);
     }
 
     public JavaSyntaxParser(SyntaxTheme theme) {
@@ -64,26 +64,25 @@ public class JavaSyntaxParser implements AnsiStringParser {
         var tokenRange = opTokenRange.get();
         Set<String> methodNames = findMethodAndConstructorIdentifiers(unit);
         var sb = Clique.styleBuilder();
-        int lineNo = 0;
+        var lineNo = new LineNumber();
+
         for (JavaToken token : tokenRange){
-            //If we're the first token otherwise
+            if (isMultiLineToken(token)){
+                styleMultiLineContent(token, lineNo, sb, methodNames);
+                continue;
+            }
+
+            //If we're the first token otherwise, if the prev token was an EOL
             if (token.getPreviousToken().isEmpty() || isEOL(token.getPreviousToken().get())){
-                appendLineNo(++lineNo, sb);
+                appendLineNo(lineNo.nextLine(), sb);
             }
+
             applyStyle(token, sb, methodNames);
-
-            if (multiLineToken(token)){
-
-            }
         }
-
-        String styled = sb.get();
 
         if (!result.isSuccessful()){
-            unwrapSnippet(styled);
-        }
-
-        return styled;
+           return unwrapSnippet(sb.get());
+        }else return sb.get();
     }
 
     void applyStyle(JavaToken token, StyleBuilder sb, Set<String> methodNames){
@@ -103,6 +102,25 @@ public class JavaSyntaxParser implements AnsiStringParser {
         }else if(isMethodOrConstructorIdentifier(token, methodNames)){
             sb.append(text, theme.method());
         }else sb.append(text);
+    }
+
+    void styleMultiLineContent(JavaToken token, LineNumber lineNo, StyleBuilder sb, Set<String> methodNames){
+        List<CustomJavaToken> tokens = token.getText()
+                .lines()
+                .map(text -> new CustomJavaToken(token.getKind(), text))
+                .toList();
+
+        int size = tokens.size();
+
+        for (int i = 0; i < size; ++i){
+            var custom = tokens.get(i);
+            if (i > 0) {
+                sb.append("\n");
+                appendLineNo(lineNo.nextLine(), sb);
+            }
+
+            applyStyle(custom, sb, methodNames);
+        }
     }
 
     Set<String> findMethodAndConstructorIdentifiers(CompilationUnit unit){
@@ -142,8 +160,8 @@ public class JavaSyntaxParser implements AnsiStringParser {
         return TokenTypes.isComment(token.getKind()) || token.getKind() == ENTER_MULTILINE_COMMENT || token.getKind() == MULTI_LINE_COMMENT;
     }
 
-    boolean multiLineToken(JavaToken token){
-        return token.getKind() == MULTI_LINE_COMMENT || token.getKind() == JAVADOC_COMMENT;
+    boolean isMultiLineToken(JavaToken token){
+        return token.getKind() == MULTI_LINE_COMMENT || token.getKind() == JAVADOC_COMMENT || token.getKind() == TEXT_BLOCK_LITERAL || token.getKind() == TEXT_BLOCK_CONTENT;
     }
 
     boolean isEOL(JavaToken token){

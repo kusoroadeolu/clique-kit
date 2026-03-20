@@ -3,7 +3,7 @@ package io.github.kusoroadeolu.cliquekit.parser.theme;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.spi.AnsiCode;
 
-public class GruvboxDarkSyntaxTheme implements SyntaxTheme {
+class GruvboxDarkSyntaxTheme implements SyntaxTheme {
 
     private static final AnsiCode KEYWORD        = Clique.rgb(251, 73, 52);   // *gb_red
     private static final AnsiCode STRING         = Clique.rgb(184, 187, 38);  // *gb_green
