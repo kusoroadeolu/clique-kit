@@ -64,7 +64,7 @@ public class JavaSyntaxParser implements AnsiStringParser {
         var tokenRange = opTokenRange.get();
         Set<String> methodNames = findMethodAndConstructorIdentifiers(unit);
         var sb = Clique.styleBuilder();
-        var lineNo = new LineNumber();
+        var lineNo = new int[1];
 
         for (JavaToken token : tokenRange){
             if (isMultiLineToken(token)){
@@ -74,7 +74,7 @@ public class JavaSyntaxParser implements AnsiStringParser {
 
             //If we're the first token otherwise, if the prev token was an EOL
             if (token.getPreviousToken().isEmpty() || isEOL(token.getPreviousToken().get())){
-                appendLineNo(lineNo.nextLine(), sb);
+                appendLineNo(++lineNo[0], sb);
             }
 
             applyStyle(token, sb, methodNames);
@@ -104,7 +104,7 @@ public class JavaSyntaxParser implements AnsiStringParser {
         }else sb.append(text);
     }
 
-    void styleMultiLineContent(JavaToken token, LineNumber lineNo, StyleBuilder sb, Set<String> methodNames){
+    void styleMultiLineContent(JavaToken token, int[] lineNo, StyleBuilder sb, Set<String> methodNames){
         List<CustomJavaToken> tokens = token.getText()
                 .lines()
                 .map(text -> new CustomJavaToken(token.getKind(), text))
@@ -112,11 +112,15 @@ public class JavaSyntaxParser implements AnsiStringParser {
 
         int size = tokens.size();
 
-        for (int i = 0; i < size; ++i){
+        boolean startsOnNewLine = token.getPreviousToken().isEmpty() || isEOL(token.getPreviousToken().get());
+
+        for (int i = 0; i < size; ++i) {
             var custom = tokens.get(i);
-            if (i > 0) {
+            if (i == 0 && startsOnNewLine) {
+                appendLineNo(++lineNo[0], sb);
+            } else if (i > 0) {
                 sb.append("\n");
-                appendLineNo(lineNo.nextLine(), sb);
+                appendLineNo(++lineNo[0], sb);
             }
 
             applyStyle(custom, sb, methodNames);
@@ -131,7 +135,7 @@ public class JavaSyntaxParser implements AnsiStringParser {
     }
 
     void appendLineNo(int lineNo, StyleBuilder sb){
-        sb.append(lineNo + ". ", theme.gutter());
+        sb.append(lineNo + " ", theme.gutter());
     }
 
     boolean isMethodOrConstructorIdentifier(JavaToken token, Set<String> methodNames){
@@ -161,7 +165,7 @@ public class JavaSyntaxParser implements AnsiStringParser {
     }
 
     boolean isMultiLineToken(JavaToken token){
-        return token.getKind() == MULTI_LINE_COMMENT || token.getKind() == JAVADOC_COMMENT || token.getKind() == TEXT_BLOCK_LITERAL || token.getKind() == TEXT_BLOCK_CONTENT;
+        return token.getKind() == ENTER_MULTILINE_COMMENT || token.getKind() == ENTER_JAVADOC_COMMENT ||  token.getKind() == MULTI_LINE_COMMENT || token.getKind() == JAVADOC_COMMENT || token.getKind() == TEXT_BLOCK_LITERAL || token.getKind() == TEXT_BLOCK_CONTENT;
     }
 
     boolean isEOL(JavaToken token){
@@ -187,10 +191,7 @@ public class JavaSyntaxParser implements AnsiStringParser {
         return List.of();
     }
 
-    /**
-     * Strips the wrapper class/method shell lines from the output,
-     * leaving only the user's original snippet lines.
-     */
+
     private String unwrapSnippet(String wrapped) {
         String[] lines = wrapped.split(Constants.NEWLINE, -1);
         // WRAPPER_START contributes 2 lines, WRAPPER_END contributes 2 lines
@@ -203,11 +204,4 @@ public class JavaSyntaxParser implements AnsiStringParser {
         return sb.toString();
     }
 
-    class LineNumber{
-        private int lineNo;
-
-        int nextLine(){
-            return ++lineNo;
-        }
-    }
 }

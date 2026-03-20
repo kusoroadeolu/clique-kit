@@ -1,12 +1,12 @@
 package io.github.kusoroadeolu.cliquekit.parser;
 
 import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
-import io.github.kusoroadeolu.cliquekit.parser.theme.CatppuccinMochaSyntaxTheme;
+import io.github.kusoroadeolu.cliquekit.parser.theme.SyntaxThemes;
 
 public class Main {
     void main(){
 
-        AnsiStringParser parser = new JavaSyntaxParser(new CatppuccinMochaSyntaxTheme());
+        AnsiStringParser parser = new JavaSyntaxParser();
         IO.println(parser.parse(codeSnippet));
 
     }
@@ -57,7 +57,7 @@ public class Main {
                             text block
                             line two
                             ""\";
-            
+
                     for (int i = 0; i < 10; i++) {
                         if (i % 2 == 0) continue;
                         System.out.println(i);
