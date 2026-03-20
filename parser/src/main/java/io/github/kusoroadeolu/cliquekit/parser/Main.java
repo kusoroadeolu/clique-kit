@@ -7,58 +7,63 @@ import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
 public class Main {
     void main(){
 
-
         AnsiStringParser parser = new JavaSyntaxParser();
+        IO.println(parser.parse(codeSnippet));
 
-        Component highlighted = () -> parser.parse(codeSnippet);
-        Clique.frame()
-                .title("[bold]Java[/]")
-                .nest(highlighted)
-                .render();
     }
 
 
     String codeSnippet = """
-            package io.github.kusoroadeolu.cliquekit.timer;
+            package com.example;
             
-            import io.github.kusoroadeolu.clique.Clique;
-            import io.github.kusoroadeolu.clique.frame.Frame;
+            import java.util.List;
+            import java.util.Map;
             
-            public class LiveRenderer {
-                private final Frame frame;
-                private final Clock clock;
-                private final String title;
+            /**
+             * Javadoc comment — tests comment coloring
+             */
+            @SuppressWarnings("unchecked")
+            public class StressTest<T extends Comparable<T>> {
             
-                public LiveRenderer(Configuration config){
-                    var time = config.time();
-                    title = config.title();
-                    if (time == null){
-                        Clique.parser().print("[ctp_red]Failed to read [bold] time [/] values from config file");
-                        time = Time.DEFAULT;
-                    }
-                    this.frame = Clique
-                            .frame();
+                private static final int MAX = 100;
+                private static final String GREETING = "Hello, World!";
+                private static final double PI = 3.14159;
+                private static final long BIG = 100_000L;
+                private static final int HEX = 0xFF;
             
-                    clock = new Clock(time);
+                // single line comment
+                public enum Status { ACTIVE, INACTIVE, PENDING }
+            
+                public record Point(int x, int y) {}
+            
+                @Override
+                public String toString() {
+                    return "StressTest{}";
                 }
             
+                public static void main(String[] args) {
+                    /* multi-line
+                       comment */
+                    var list = List.of(1, 2, 3);
+                    int result = switch (list.size()) {
+                        case 1 -> 10;
+                        case 2 -> 20;
+                        default -> {
+                            int val = list.size() * MAX;
+                            yield val;
+                        }
+                    };
             
-                public void render() throws InterruptedException {
-                    frame.title("[ctp_mauve] %s [/]".formatted(title))
-                            .nest(clock);
+                    String text = ""\"
+                            text block
+                            line two
+                            ""\";
             
-                    int lastSize = 0;
-                    while (!clock.isDone()) {
-                        if (lastSize > 0) System.out.print("\\033[" + lastSize + "A");
-            
-                        var rendered = frame.get();
-                        var lines = rendered.lines().toList();
-                        for (var line : lines) System.out.println("\\r" + line);
-                        lastSize = lines.size();
-                        clock.tick();
+                    for (int i = 0; i < 10; i++) {
+                        if (i % 2 == 0) continue;
+                        System.out.println(i);
                     }
                 }
             }
-            
             """;
 }
