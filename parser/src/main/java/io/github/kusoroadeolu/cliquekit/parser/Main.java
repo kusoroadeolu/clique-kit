@@ -1,13 +1,12 @@
 package io.github.kusoroadeolu.cliquekit.parser;
 
-import io.github.kusoroadeolu.clique.Clique;
-import io.github.kusoroadeolu.clique.core.display.Component;
 import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
+import io.github.kusoroadeolu.cliquekit.parser.theme.CatppuccinMochaSyntaxTheme;
 
 public class Main {
     void main(){
 
-        AnsiStringParser parser = new JavaSyntaxParser();
+        AnsiStringParser parser = new JavaSyntaxParser(new CatppuccinMochaSyntaxTheme());
         IO.println(parser.parse(codeSnippet));
 
     }

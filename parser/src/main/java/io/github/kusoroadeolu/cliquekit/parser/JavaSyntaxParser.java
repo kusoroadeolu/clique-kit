@@ -5,10 +5,12 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import io.github.kusoroadeolu.clique.Clique;
-import io.github.kusoroadeolu.clique.ansi.ColorCode;
 import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
 import io.github.kusoroadeolu.clique.spi.AnsiCode;
+import io.github.kusoroadeolu.clique.style.StyleBuilder;
+import io.github.kusoroadeolu.cliquekit.parser.theme.DefaultSyntaxTheme;
+import io.github.kusoroadeolu.cliquekit.parser.theme.SyntaxTheme;
 
 import java.util.HashSet;
 import java.util.List;
@@ -18,19 +20,18 @@ import java.util.Set;
 import static com.github.javaparser.GeneratedJavaParserConstants.*;
 
 public class JavaSyntaxParser implements AnsiStringParser {
-
-    private static final AnsiCode KEYWORD        = Clique.rgb(204, 120, 50);
-    private static final AnsiCode STRING         = Clique.rgb(106, 135, 89);
-    private static final AnsiCode NUMBER_LITERAL = Clique.rgb(104, 151, 187);
-    private static final AnsiCode COMMENT        = Clique.rgb(128, 128, 128);
-    private static final AnsiCode ANNOTATION     = Clique.rgb(187, 181, 41);
-    private static final AnsiCode METHOD         = Clique.rgb(255, 198, 109);
     private final JavaParser parser;
+    private final SyntaxTheme theme;
 
     public JavaSyntaxParser() {
+        this(new DefaultSyntaxTheme());
+    }
+
+    public JavaSyntaxParser(SyntaxTheme theme) {
         var config = new ParserConfiguration();
         config.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
         this.parser = new JavaParser(config);
+        this.theme = theme;
     }
 
     private static final String WRAPPER = """
@@ -49,41 +50,59 @@ public class JavaSyntaxParser implements AnsiStringParser {
     public String parse(String s) {
         if (s == null || s.isBlank()) return "";
         ParseResult<CompilationUnit> result = parser.parse(s);
-        if (!result.isSuccessful()) return s;
+        if (!result.isSuccessful()) {
+            s = wrapSnippet(s);
+        }
+
         Optional<CompilationUnit> opUnit = result.getResult();
         if (opUnit.isEmpty()) return s;
-        CompilationUnit unit = opUnit.get();
 
+        CompilationUnit unit = opUnit.get();
         var opTokenRange = unit.getTokenRange();
         if (opTokenRange.isEmpty()) return s;
 
         var tokenRange = opTokenRange.get();
         Set<String> methodNames = findMethodAndConstructorIdentifiers(unit);
-
-
-        boolean inAnnotation = false;
         var sb = Clique.styleBuilder();
+        int lineNo = 0;
         for (JavaToken token : tokenRange){
-            String text = token.getText();
-            if (isKeyword(token) || isUnicodeEscape(token)){
-                sb.append(text, KEYWORD);
-            }else if (isStringOrJavadoc(token)){
-                sb.append(text, STRING);
-            } else if (isLiteral(token)) {
-                sb.append(text, NUMBER_LITERAL);
-            }else if (isComment(token)){
-                sb.append(text, COMMENT);
-            }else if(isEOL(token)){
-                sb.append(text);
-                inAnnotation = false;
-            } else if (isAnnotation(token) || inAnnotation) {
-                sb.append(text, ANNOTATION);
-                inAnnotation = true;
-            }else if(isMethodOrConstructorIdentifier(token, methodNames)){
-                sb.append(text, METHOD);
-            }else sb.append(text);
+            //If we're the first token otherwise
+            if (token.getPreviousToken().isEmpty() || isEOL(token.getPreviousToken().get())){
+                appendLineNo(++lineNo, sb);
+            }
+            applyStyle(token, sb, methodNames);
+
+            if (multiLineToken(token)){
+
+            }
         }
-        return sb.get();
+
+        String styled = sb.get();
+
+        if (!result.isSuccessful()){
+            unwrapSnippet(styled);
+        }
+
+        return styled;
+    }
+
+    void applyStyle(JavaToken token, StyleBuilder sb, Set<String> methodNames){
+        String text = token.getText();
+        if (isKeyword(token) || isUnicodeEscape(token)){
+            sb.append(text, theme.keyword());
+        }else if (isStringOrJavadoc(token)){
+            sb.append(text, theme.string());
+        } else if (isLiteral(token)) {
+            sb.append(text, theme.numberLiteral());
+        }else if (isComment(token)){
+            sb.append(text, theme.comment());
+        }else if(isEOL(token)){
+            sb.append(text);
+        } else if (isAnnotation(token)) {
+            sb.append(text, theme.annotation());
+        }else if(isMethodOrConstructorIdentifier(token, methodNames)){
+            sb.append(text, theme.method());
+        }else sb.append(text);
     }
 
     Set<String> findMethodAndConstructorIdentifiers(CompilationUnit unit){
@@ -91,6 +110,10 @@ public class JavaSyntaxParser implements AnsiStringParser {
         unit.findAll(MethodDeclaration.class).forEach(m -> methodNames.add(m.getNameAsString()));
         unit.findAll(ConstructorDeclaration.class).forEach(c -> methodNames.add(c.getNameAsString()));
         return methodNames;
+    }
+
+    void appendLineNo(int lineNo, StyleBuilder sb){
+        sb.append(lineNo + ". ", theme.gutter());
     }
 
     boolean isMethodOrConstructorIdentifier(JavaToken token, Set<String> methodNames){
@@ -117,6 +140,10 @@ public class JavaSyntaxParser implements AnsiStringParser {
 
     boolean isComment(JavaToken token){
         return TokenTypes.isComment(token.getKind()) || token.getKind() == ENTER_MULTILINE_COMMENT || token.getKind() == MULTI_LINE_COMMENT;
+    }
+
+    boolean multiLineToken(JavaToken token){
+        return token.getKind() == MULTI_LINE_COMMENT || token.getKind() == JAVADOC_COMMENT;
     }
 
     boolean isEOL(JavaToken token){
@@ -156,5 +183,13 @@ public class JavaSyntaxParser implements AnsiStringParser {
             sb.append(lines[i]);
         }
         return sb.toString();
+    }
+
+    class LineNumber{
+        private int lineNo;
+
+        int nextLine(){
+            return ++lineNo;
+        }
     }
 }
