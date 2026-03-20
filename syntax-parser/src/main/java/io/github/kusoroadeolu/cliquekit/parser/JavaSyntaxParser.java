@@ -252,7 +252,4 @@ public class JavaSyntaxParser implements AnsiStringParser {
 
     }
 
-    record WrapType(boolean wrapper1, boolean wrapper2){
-
-    }
 }

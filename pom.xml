@@ -11,7 +11,7 @@
 
     <modules>
         <module>cli-timer</module>
-        <module>parser</module>
+        <module>syntax-parser</module>
     </modules>
 
     <properties>
