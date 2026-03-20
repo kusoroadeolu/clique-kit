@@ -23,8 +23,8 @@
             <artifactId>clique-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.kusoroadeolu</groupId>
-            <artifactId>clique-themes</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.javaparser</groupId>

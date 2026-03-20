@@ -11,6 +11,9 @@ class NordSyntaxTheme implements SyntaxTheme {
     private static final AnsiCode COMMENT        = Clique.rgb(76, 86, 106);   // nord_polar3
     private static final AnsiCode ANNOTATION     = Clique.rgb(235, 203, 139); // nord_yellow
     private static final AnsiCode METHOD         = Clique.rgb(94, 129, 172);  // nord_frost3
+    private static final AnsiCode TYPES = Clique.rgb(143, 188, 187); // nord_frost0
+    private static final AnsiCode CONSTANTS = Clique.rgb(180, 142, 173); // nord_aurora_purple
+
 
     @Override public AnsiCode keyword()       { return KEYWORD; }
     @Override public AnsiCode string()        { return STRING; }
@@ -19,4 +22,14 @@ class NordSyntaxTheme implements SyntaxTheme {
     @Override public AnsiCode annotation()    { return ANNOTATION; }
     @Override public AnsiCode method()        { return METHOD; }
     @Override public AnsiCode gutter()        { return COMMENT; }
+
+    @Override
+    public AnsiCode types() {
+        return TYPES;
+    }
+
+    @Override
+    public AnsiCode constants() {
+        return CONSTANTS;
+    }
 }

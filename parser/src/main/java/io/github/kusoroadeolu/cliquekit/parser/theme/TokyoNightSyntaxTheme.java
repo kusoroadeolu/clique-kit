@@ -12,6 +12,9 @@ class TokyoNightSyntaxTheme implements SyntaxTheme {
     private static final AnsiCode ANNOTATION     = Clique.rgb(224, 175, 104); // yellow
     private static final AnsiCode METHOD         = Clique.rgb(122, 162, 247); // blue
     private static final AnsiCode GUTTER         = Clique.rgb(59, 66, 97);    // fgGutter
+    private static final AnsiCode TYPES         = Clique.rgb(42, 195, 222); // teal
+    private static final AnsiCode CONSTANTS    = Clique.rgb(255, 158, 100); // orange
+
 
     @Override public AnsiCode keyword()       { return KEYWORD; }
     @Override public AnsiCode string()        { return STRING; }
@@ -20,4 +23,14 @@ class TokyoNightSyntaxTheme implements SyntaxTheme {
     @Override public AnsiCode annotation()    { return ANNOTATION; }
     @Override public AnsiCode method()        { return METHOD; }
     @Override public AnsiCode gutter()        { return GUTTER; }
+
+    @Override
+    public AnsiCode types() {
+        return TYPES;
+    }
+
+    @Override
+    public AnsiCode constants() {
+        return CONSTANTS;
+    }
 }

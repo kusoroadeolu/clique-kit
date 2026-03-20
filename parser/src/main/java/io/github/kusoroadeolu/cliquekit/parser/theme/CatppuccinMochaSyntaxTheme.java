@@ -12,6 +12,9 @@ class CatppuccinMochaSyntaxTheme implements SyntaxTheme {
     private static final AnsiCode ANNOTATION     = Clique.rgb(249, 226, 175); // ctp_yellow
     private static final AnsiCode METHOD         = Clique.rgb(137, 180, 250); // ctp_blue
     private static final AnsiCode GUTTER         = Clique.rgb(88, 91, 112);   // ctp_surface2
+    private static final AnsiCode TYPES          = Clique.rgb(245, 194, 231); // ctp_pink
+    private static final AnsiCode CONSTANTS      = Clique.rgb(243, 139, 168); // ctp_red
+
 
     @Override public AnsiCode keyword()       { return KEYWORD; }
     @Override public AnsiCode string()        { return STRING; }
@@ -20,4 +23,14 @@ class CatppuccinMochaSyntaxTheme implements SyntaxTheme {
     @Override public AnsiCode annotation()    { return ANNOTATION; }
     @Override public AnsiCode method()        { return METHOD; }
     @Override public AnsiCode gutter()        { return GUTTER; }
+
+    @Override
+    public AnsiCode types() {
+        return TYPES;
+    }
+
+    @Override
+    public AnsiCode constants() {
+        return CONSTANTS;
+    }
 }

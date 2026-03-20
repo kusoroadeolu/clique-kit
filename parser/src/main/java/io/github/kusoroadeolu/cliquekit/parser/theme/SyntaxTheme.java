@@ -10,4 +10,6 @@ public interface SyntaxTheme {
     AnsiCode annotation();
     AnsiCode method();
     AnsiCode gutter();
+    AnsiCode types();
+    AnsiCode constants();
 }
