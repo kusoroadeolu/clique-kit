@@ -1,8 +1,8 @@
-package io.github.kusoroadeolu.cliquekit.parser;
+package io.github.kusoroadeolu.veneer;
 
 import com.github.javaparser.JavaToken;
 
-public class CustomJavaToken extends JavaToken {
+class CustomJavaToken extends JavaToken {
     public CustomJavaToken(int kind, String text) {
         super(kind, text);
     }

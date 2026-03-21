@@ -1,4 +1,4 @@
-package io.github.kusoroadeolu.cliquekit.parser.theme;
+package io.github.kusoroadeolu.veneer.theme;
 
 public class SyntaxThemes {
     public static final SyntaxTheme CATPPUCCIN_MOCHA = new CatppuccinMochaSyntaxTheme();

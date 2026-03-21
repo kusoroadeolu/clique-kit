@@ -1,4 +1,4 @@
-package io.github.kusoroadeolu.cliquekit.parser.theme;
+package io.github.kusoroadeolu.veneer.theme;
 
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.spi.AnsiCode;
@@ -17,12 +17,13 @@ class CatppuccinMochaSyntaxTheme implements SyntaxTheme {
 
 
     @Override public AnsiCode keyword()       { return KEYWORD; }
-    @Override public AnsiCode string()        { return STRING; }
+    @Override public AnsiCode stringLiteral()        { return STRING; }
     @Override public AnsiCode numberLiteral() { return NUMBER_LITERAL; }
     @Override public AnsiCode comment()       { return COMMENT; }
     @Override public AnsiCode annotation()    { return ANNOTATION; }
     @Override public AnsiCode method()        { return METHOD; }
     @Override public AnsiCode gutter()        { return GUTTER; }
+
 
     @Override
     public AnsiCode types() {

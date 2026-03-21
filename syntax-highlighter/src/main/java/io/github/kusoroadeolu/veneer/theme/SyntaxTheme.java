@@ -1,10 +1,10 @@
-package io.github.kusoroadeolu.cliquekit.parser.theme;
+package io.github.kusoroadeolu.veneer.theme;
 
 import io.github.kusoroadeolu.clique.spi.AnsiCode;
 
 public interface SyntaxTheme {
     AnsiCode keyword();
-    AnsiCode string();
+    AnsiCode stringLiteral();
     AnsiCode numberLiteral();
     AnsiCode comment();
     AnsiCode annotation();
