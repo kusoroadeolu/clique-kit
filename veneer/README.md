@@ -16,7 +16,7 @@ Add the dependency to your `pom.xml`:
 <dependency>
     <groupId>io.github.kusoroadeolu</groupId>
     <artifactId>parser</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
