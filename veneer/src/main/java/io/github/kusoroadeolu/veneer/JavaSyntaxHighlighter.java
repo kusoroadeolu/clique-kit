@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 import static com.github.javaparser.GeneratedJavaParserConstants.*;
+import static io.github.kusoroadeolu.veneer.Utils.formatNoTo3dp;
 
 public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     private final JavaParser parser;
@@ -243,7 +244,7 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     }
 
     void appendLineNo(int lineNo, StyleBuilder sb){
-        sb.append(lineNo + " ", theme.gutter());
+        sb.append(formatNoTo3dp(lineNo), theme.gutter());
     }
 
     boolean isMethodOrConstructorIdentifier(JavaToken token, Set<JavaToken> methodTokens){
