@@ -11,11 +11,10 @@ import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.github.javaparser.GeneratedJavaParserConstants.*;
 import static io.github.kusoroadeolu.veneer.Utils.formatNoTo3dp;
@@ -23,7 +22,7 @@ import static io.github.kusoroadeolu.veneer.Utils.formatNoTo3dp;
 public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     private final JavaParser parser;
     private final SyntaxTheme theme;
-    private final boolean allowLineCount;
+    private final boolean showLineNumbers;
     private static final String VAR = "var";
 
     public JavaSyntaxHighlighter() {
@@ -34,16 +33,16 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
         this(theme, true);
     }
 
-    public JavaSyntaxHighlighter(boolean allowLineCount)  {
-        this(SyntaxThemes.DEFAULT, allowLineCount);
+    public JavaSyntaxHighlighter(boolean showLineNumbers)  {
+        this(SyntaxThemes.DEFAULT, showLineNumbers);
     }
 
-    public JavaSyntaxHighlighter(SyntaxTheme theme, boolean allowLineCount) {
+    public JavaSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers) {
         var config = new ParserConfiguration();
         config.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
         this.parser = new JavaParser(config);
         this.theme = theme;
-        this.allowLineCount = allowLineCount;
+        this.showLineNumbers = showLineNumbers;
     }
 
     @Override
@@ -68,7 +67,7 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
         var bundle = new AstBundle(methodNames, typeTokens, constants);
         StyleBuilder sb = Clique.styleBuilder();
 
-        if (allowLineCount) styleWithLines(sb, tokenRange, bundle);
+        if (showLineNumbers) styleWithLines(sb, tokenRange, bundle);
         else styleWithoutLines(sb, tokenRange, bundle);
 
         return sb.get();

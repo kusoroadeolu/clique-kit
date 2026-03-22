@@ -549,35 +549,10 @@ abstract class PythonLexerBase extends Lexer {
                     this.createAndAddPendingToken(PythonLexer.FSTRING_MIDDLE, Token.DEFAULT_CHANNEL, "", this.ffgToken);
                     break;
                 case PythonLexer.RBRACE:
-                    // only if the previous brace expression is not a dictionary comprehension or set comprehension
-//                    if (!isDictionaryComprehensionOrSetComprehension(this.prevBraceExpression)) {
-//                        this.createAndAddPendingToken(PythonLexer.FSTRING_MIDDLE, Token.DEFAULT_CHANNEL, "", this.ffgToken);
-//                    }
                     break;
             }
         }
     }
-
-//    private boolean isDictionaryComprehensionOrSetComprehension(final String code) {
-//        final CharStream inputStream = CharStreams.fromString(code);
-//        final PythonLexer lexer = new PythonLexer(inputStream);
-//        final CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-//        PythonParser parser = new PythonParser(tokenStream);
-//
-//        // Disable error listeners to suppress console output
-//        lexer.removeErrorListeners();
-//        parser.removeErrorListeners();
-//
-//        parser.dictcomp(); // Try parsing as dictionary comprehension
-//        if (parser.getNumberOfSyntaxErrors() == 0)
-//            return  true;
-//
-//        parser = new PythonParser(tokenStream);
-//        tokenStream.seek(0);
-//        parser.removeErrorListeners();
-//        parser.setcomp(); // Try parsing as set comprehension
-//        return parser.getNumberOfSyntaxErrors() == 0;
-//    }
 
     private void insertTrailingTokens() {
         switch (this.lastPendingTokenTypeFromDefaultChannel) {

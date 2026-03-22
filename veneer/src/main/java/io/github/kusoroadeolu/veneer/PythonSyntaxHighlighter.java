@@ -7,13 +7,12 @@ import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
-
 import io.github.kusoroadeolu.veneer.PythonLexer;
 
 public class PythonSyntaxHighlighter implements SyntaxHighlighter {
 
     private final SyntaxTheme theme;
-    private final boolean allowLineCount;
+    private final boolean showLineNumbers;
 
     public PythonSyntaxHighlighter() {
         this(SyntaxThemes.DEFAULT, true);
@@ -23,14 +22,14 @@ public class PythonSyntaxHighlighter implements SyntaxHighlighter {
         this(theme, true);
     }
 
-    public PythonSyntaxHighlighter(boolean allowLineCount) {
-        this(SyntaxThemes.DEFAULT, allowLineCount);
+    public PythonSyntaxHighlighter(boolean showLineNumbers) {
+        this(SyntaxThemes.DEFAULT, showLineNumbers);
     }
 
 
-    public PythonSyntaxHighlighter(SyntaxTheme theme, boolean allowLineCount) {
+    public PythonSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers) {
         this.theme = theme;
-        this.allowLineCount = allowLineCount;
+        this.showLineNumbers = showLineNumbers;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class PythonSyntaxHighlighter implements SyntaxHighlighter {
         tokenStream.fill();
         int lineNumber = 0;
         for (Token token : tokenStream.getTokens()) {
-            if (token.getType() == PythonLexer.NEWLINE && allowLineCount) {
+            if (token.getType() == PythonLexer.NEWLINE && showLineNumbers) {
                 sb.append("\n");
                 lineNumber++;
                 sb.append(Utils.formatNoTo3dp(lineNumber) , theme.gutter());

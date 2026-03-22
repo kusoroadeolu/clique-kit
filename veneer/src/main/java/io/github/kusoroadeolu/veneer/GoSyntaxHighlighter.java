@@ -12,7 +12,7 @@ import io.github.kusoroadeolu.veneer.GoLexer;
 public class GoSyntaxHighlighter implements SyntaxHighlighter {
 
     private final SyntaxTheme theme;
-    private final boolean allowLineCount;
+    private final boolean showLineNumbers;
 
     private static final int KEYWORD_START = 1;
     private static final int KEYWORD_END   = 26;
@@ -28,13 +28,13 @@ public class GoSyntaxHighlighter implements SyntaxHighlighter {
         this(theme, true);
     }
 
-    public GoSyntaxHighlighter(boolean allowLineCount) {
-        this(SyntaxThemes.DEFAULT, allowLineCount);
+    public GoSyntaxHighlighter(boolean showLineNumbers) {
+        this(SyntaxThemes.DEFAULT, showLineNumbers);
     }
 
-    public GoSyntaxHighlighter(SyntaxTheme theme, boolean allowLineCount) {
+    public GoSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers) {
         this.theme = theme;
-        this.allowLineCount = allowLineCount;
+        this.showLineNumbers = showLineNumbers;
     }
 
     @Override
@@ -49,9 +49,9 @@ public class GoSyntaxHighlighter implements SyntaxHighlighter {
 
         List<Token> tokens = tokenStream.getTokens();
         int size = tokens.size();
-        int[] lineNumber = {0};
+        int[] lineNumber = new int[1];
 
-        if (allowLineCount) {
+        if (showLineNumbers) {
             sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
         }
 
@@ -64,9 +64,9 @@ public class GoSyntaxHighlighter implements SyntaxHighlighter {
 
             Token next = lookahead(tokens, i + 1);
 
-            if (allowLineCount && isMultiLineToken(token)) {
+            if (showLineNumbers && isMultiLineToken(token)) {
                 styleMultiLineToken(token, next, lineNumber, sb);
-            }else if (allowLineCount && isLineEnding(token)) {
+            }else if (showLineNumbers && isLineEnding(token)) {
                 String text = token.getText();
                 long newlineCount = text.chars().filter(c -> c == '\n').count();
                 for (int j = 0; j < newlineCount; j++) {
@@ -74,14 +74,14 @@ public class GoSyntaxHighlighter implements SyntaxHighlighter {
                     sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
                 }
             } else {
-                applyStyle(token, next, sb);
+                applyStyle(token, sb);
             }
         }
 
         return sb.get();
     }
 
-    void applyStyle(Token token, Token next, StyleBuilder sb) {
+    void applyStyle(Token token, StyleBuilder sb) {
         int type = token.getType();
         String text = token.getText();
 
@@ -102,8 +102,6 @@ public class GoSyntaxHighlighter implements SyntaxHighlighter {
             sb.append(text, theme.numberLiteral());
         } else if (isKeyword(type)) {
             sb.append(text, theme.keyword());
-        } else if (isFunctionCall(type, next)) {
-            sb.append(text, theme.method());
         } else {
             sb.append(text);
         }
@@ -119,7 +117,7 @@ public class GoSyntaxHighlighter implements SyntaxHighlighter {
                 sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
             }
             // Wrap the line fragment in a synthetic token so applyStyle can color it correctly
-            applyStyle(new FragmentToken(token, lines[i]), next, sb);
+            applyStyle(new FragmentToken(token, lines[i]), sb);
         }
     }
 
@@ -167,14 +165,7 @@ public class GoSyntaxHighlighter implements SyntaxHighlighter {
         return type == GoLexer.WS || type == GoLexer.WS_NLSEMI;
     }
 
-    boolean isFunctionCall(int type, Token next) {
-        return type == GoLexer.IDENTIFIER
-                && next != null
-                && next.getType() == GoLexer.L_PAREN;
-    }
 
-    // Lightweight wrapper so we can pass a line fragment through applyStyle
-        // without losing the original token's type and channel info.
         private record FragmentToken(Token origin, String text) implements Token {
 
         @Override

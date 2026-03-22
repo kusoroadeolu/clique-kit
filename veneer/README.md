@@ -1,6 +1,6 @@
 # Veneer
 
-A syntax highlighting library for Java, Python, and Go that styles source code with ANSI color codes. Built on top of [JavaParser](https://github.com/javaparser/javaparser), [ANTLR4](https://github.com/antlr/antlr4), and the [Clique](https://github.com/kusoroadeolu/Clique) styling library.
+A syntax highlighting library for Java, Python, Go, and Lua that styles source code with ANSI color codes. Built on top of [JavaParser](https://github.com/javaparser/javaparser), [ANTLR4](https://github.com/antlr/antlr4), and the [Clique](https://github.com/kusoroadeolu/Clique) styling library.
 
 ---
 
@@ -89,6 +89,18 @@ The same constructor overloads and `highlight(Path)` / `print(Path)` methods fro
 
 ---
 
+### Lua
+
+```java
+LuaSyntaxHighlighter highlighter = new LuaSyntaxHighlighter();
+String styled = highlighter.highlight(sourceCode);
+System.out.println(styled);
+```
+
+The same constructor overloads and `highlight(Path)` / `print(Path)` methods from the Java section are available — just swap in `LuaSyntaxHighlighter` and point the path at a `.lua` file.
+
+---
+
 ## Themes
 
 The following built-in themes are available via `SyntaxThemes` and work across all highlighters:
@@ -122,9 +134,10 @@ public class MyTheme implements SyntaxTheme {
 Then pass it to any highlighter:
 
 ```java
-JavaSyntaxHighlighter highlighter = new JavaSyntaxHighlighter(new MyTheme());
-PythonSyntaxHighlighter highlighter = new PythonSyntaxHighlighter(new MyTheme());
-GoSyntaxHighlighter highlighter = new GoSyntaxHighlighter(new MyTheme());
+SyntaxHighlighter highlighter = new JavaSyntaxHighlighter(new MyTheme());
+SyntaxHighlighter highlighter = new PythonSyntaxHighlighter(new MyTheme());
+SyntaxHighlighter highlighter = new GoSyntaxHighlighter(new MyTheme());
+SyntaxHighlighter highlighter = new LuaSyntaxHighlighter(new MyTheme());
 ```
 
 ---
@@ -146,23 +159,31 @@ GoSyntaxHighlighter highlighter = new GoSyntaxHighlighter(new MyTheme());
 
 ### Python
 
-| Category        | Examples                                          |
-|-----------------|---------------------------------------------------|
-| Keywords        | `def`, `class`, `return`, `if`, `for`, `yield`... |
-| Strings         | `"hello"`, `'world'`, f-strings                   |
-| Number literals | `42`, `3.14`, `0xFF`, ...                         |
-| Comments        | `# comment`                                       |
-| Annotations     | `@staticmethod`, `@property`, ...                 |
+| Category        | Examples                                            |
+|-----------------|-----------------------------------------------------|
+| Keywords        | `def`, `class`, `return`, `if`, `for`, `yield`...   |
+| Strings         | `"hello"`, `'world'`, `f-strings`                   |
+| Number literals | `42`, `3.14`, `0xFF`, ...                           |
+| Comments        | `# comment`                                         |
+| Annotations     | `@staticmethod`, `@property`, ...                   |
 
 ### Go
 
-| Category        | Examples                                                        |
-|-----------------|-----------------------------------------------------------------|
-| Keywords        | `func`, `package`, `import`, `var`, `const`, `type`, `return`, ... |
-| Strings         | `"hello"`, raw string literals (`` ` ``), rune literals        |
-| Number literals | `42`, `3.14`, `0xFF`, `0b1010`, `0o777`, `1i`, ...             |
-| Comments        | `//`, `/* */`                                                   |
-| Function calls  | Identifiers immediately followed by `(`                        |
+| Category        | Examples                                                             |
+|-----------------|----------------------------------------------------------------------|
+| Keywords        | `func`, `package`, `import`, `var`, `const`, `type`, `return`, ...   |
+| Strings         | `"hello"`, raw string literals (`` ` ``), rune literals              |
+| Number literals | `42`, `3.14`, `0xFF`, `0b1010`, `0o777`, `1i`, ...                   |
+| Comments        | `//`, `/* */`                                                        |
+
+### Lua
+
+| Category        | Examples                                                                     |
+|-----------------|------------------------------------------------------------------------------|
+| Keywords        | `local`, `function`, `if`, `then`, `else`, `for`, `in`, `return`, `end`, ... |
+| Strings         | `"hello"`, `'world'`, `[[long strings]]`                                     |
+| Number literals | `42`, `3.14`, `0xFF`, `1.0e5`, ...                                           |
+| Comments        | `--`, `--[[ block comments ]]`                                               |
 
 ---
 
@@ -224,10 +245,7 @@ Python has context-sensitive soft keywords — `match`, `case`, and `type` — t
 ### Go
 
 #### `nil` literal
-`nil` is styled as a keyword since it falls within the keyword token range in the lexer. This is a minor cosmetic difference — functionally it will still be visually distinct from regular identifiers.
-
-#### Function call detection
-Function calls are identified by checking if an `IDENTIFIER` token is immediately followed by `(`. This means method calls on receivers (e.g., `c.Area()`) will have the method name styled correctly, but the receiver itself (`c`) will not be styled as anything special, which is consistent with how most terminal highlighters handle this.
+`nil` is styled as a keyword since it falls within the keyword token range in the lexer. This is a minor cosmetic difference, functionally it will still be visually distinct from regular identifiers.
 
 ---
 
