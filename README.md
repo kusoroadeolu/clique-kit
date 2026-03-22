@@ -23,7 +23,7 @@ Each module is published independently to Maven Central. Pull only what you need
 <dependency>
     <groupId>io.github.kusoroadeolu</groupId>
     <artifactId>veneer</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
