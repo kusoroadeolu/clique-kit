@@ -1,10 +1,25 @@
 package io.github.kusoroadeolu.veneer;
 
+import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
+
 import java.io.IOException;
 import java.nio.file.Path;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        new PythonSyntaxHighlighter().print(Path.of("C:\\Users\\eastw\\Git Projects\\Personal\\clique-kit\\veneer\\src\\main\\java\\io\\github\\kusoroadeolu\\veneer\\PythonSyntaxHighlighter.java"));
+        new GoSyntaxHighlighter(SyntaxThemes.CATPPUCCIN_MOCHA).print(
+                """
+package main
+
+func main() {
+	ch := make(chan int)
+	go func() {
+		ch <- 42
+	}()
+	v := <-ch
+	_ = v
+}
+                        """
+        );
     }
 }

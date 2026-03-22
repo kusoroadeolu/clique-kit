@@ -1,6 +1,6 @@
 # Veneer
 
-A syntax highlighting library for Java and Python that styles source code with ANSI color codes. Built on top of [JavaParser](https://github.com/javaparser/javaparser), [ANTLR4](https://github.com/antlr/antlr4), and the [Clique](https://github.com/kusoroadeolu/Clique) styling library.
+A syntax highlighting library for Java, Python, and Go that styles source code with ANSI color codes. Built on top of [JavaParser](https://github.com/javaparser/javaparser), [ANTLR4](https://github.com/antlr/antlr4), and the [Clique](https://github.com/kusoroadeolu/Clique) styling library.
 
 ---
 
@@ -67,42 +67,25 @@ highlighter.print(Path.of("MyClass.java"));
 
 ### Python
 
-#### Basic
-
 ```java
 PythonSyntaxHighlighter highlighter = new PythonSyntaxHighlighter();
 String styled = highlighter.highlight(sourceCode);
 System.out.println(styled);
 ```
 
-#### With a theme
+The same constructor overloads and `highlight(Path)` / `print(Path)` methods from the Java section are available — just swap in `PythonSyntaxHighlighter` and point the path at a `.py` file.
+
+---
+
+### Go
 
 ```java
-PythonSyntaxHighlighter highlighter = new PythonSyntaxHighlighter(SyntaxThemes.CATPPUCCIN_MOCHA);
-highlighter.print(sourceCode);
-```
-
-#### Without line numbers
-
-```java
-PythonSyntaxHighlighter highlighter = new PythonSyntaxHighlighter(false);
+GoSyntaxHighlighter highlighter = new GoSyntaxHighlighter();
 String styled = highlighter.highlight(sourceCode);
+System.out.println(styled);
 ```
 
-#### With both options
-
-```java
-PythonSyntaxHighlighter highlighter = new PythonSyntaxHighlighter(SyntaxThemes.NORD, false);
-String styled = highlighter.highlight(sourceCode);
-```
-
-#### From a file
-
-```java
-PythonSyntaxHighlighter highlighter = new PythonSyntaxHighlighter();
-String styled = highlighter.highlight(Path.of("script.py"));
-highlighter.print(Path.of("script.py"));
-```
+The same constructor overloads and `highlight(Path)` / `print(Path)` methods from the Java section are available — just swap in `GoSyntaxHighlighter` and point the path at a `.go` file.
 
 ---
 
@@ -141,6 +124,7 @@ Then pass it to any highlighter:
 ```java
 JavaSyntaxHighlighter highlighter = new JavaSyntaxHighlighter(new MyTheme());
 PythonSyntaxHighlighter highlighter = new PythonSyntaxHighlighter(new MyTheme());
+GoSyntaxHighlighter highlighter = new GoSyntaxHighlighter(new MyTheme());
 ```
 
 ---
@@ -169,6 +153,16 @@ PythonSyntaxHighlighter highlighter = new PythonSyntaxHighlighter(new MyTheme())
 | Number literals | `42`, `3.14`, `0xFF`, ...                         |
 | Comments        | `# comment`                                       |
 | Annotations     | `@staticmethod`, `@property`, ...                 |
+
+### Go
+
+| Category        | Examples                                                        |
+|-----------------|-----------------------------------------------------------------|
+| Keywords        | `func`, `package`, `import`, `var`, `const`, `type`, `return`, ... |
+| Strings         | `"hello"`, raw string literals (`` ` ``), rune literals        |
+| Number literals | `42`, `3.14`, `0xFF`, `0b1010`, `0o777`, `1i`, ...             |
+| Comments        | `//`, `/* */`                                                   |
+| Function calls  | Identifiers immediately followed by `(`                        |
 
 ---
 
@@ -226,6 +220,14 @@ If a local variable shares a name with a declared method (e.g., `int foo = 5` wh
 
 #### Soft keywords
 Python has context-sensitive soft keywords — `match`, `case`, and `type` — that are only keywords in specific contexts. The highlighter styles them as keywords wherever they appear, so in rare cases where they're used as variable names they'll still be colored as keywords.
+
+### Go
+
+#### `nil` literal
+`nil` is styled as a keyword since it falls within the keyword token range in the lexer. This is a minor cosmetic difference — functionally it will still be visually distinct from regular identifiers.
+
+#### Function call detection
+Function calls are identified by checking if an `IDENTIFIER` token is immediately followed by `(`. This means method calls on receivers (e.g., `c.Area()`) will have the method name styled correctly, but the receiver itself (`c`) will not be styled as anything special, which is consistent with how most terminal highlighters handle this.
 
 ---
 

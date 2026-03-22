@@ -1,8 +1,5 @@
 package io.github.kusoroadeolu.veneer;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Path;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
@@ -11,8 +8,6 @@ import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 
-import java.nio.file.Files;
-import java.util.Objects;
 import io.github.kusoroadeolu.veneer.PythonLexer;
 
 public class PythonSyntaxHighlighter implements SyntaxHighlighter {
@@ -56,32 +51,6 @@ public class PythonSyntaxHighlighter implements SyntaxHighlighter {
             }
         }
         return sb.get();
-    }
-
-    @Override
-    public String highlight(Path path) throws IOException {
-        Objects.requireNonNull(path, "Path cannot be null");
-        return highlight(Files.readString(path));
-    }
-
-    @Override
-    public void print(String s, PrintStream stream) {
-        stream.println(highlight(s));
-    }
-
-    @Override
-    public void print(String s) {
-        print(s, System.out);
-    }
-
-    @Override
-    public void print(Path path, PrintStream stream) throws IOException {
-        stream.println(highlight(path));
-    }
-
-    @Override
-    public void print(Path path) throws IOException {
-        print(path, System.out);
     }
 
     void applyStyle(Token token, StyleBuilder sb) {

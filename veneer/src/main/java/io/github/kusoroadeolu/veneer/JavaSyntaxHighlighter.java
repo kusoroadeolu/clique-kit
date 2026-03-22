@@ -61,34 +61,6 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
         return tryStyleString(unit,tokenRange);
     }
 
-    @Override
-    public String highlight(Path path) throws IOException {
-        Objects.requireNonNull(path, "Path cannot be null");
-        return highlight(Files.readString(path));
-    }
-
-    @Override
-    public void print(String s, PrintStream stream){
-        stream.println(highlight(s));
-    }
-
-    @Override
-    public void print(String s){
-        print(s, System.out);
-    }
-
-    @Override
-    public void print(Path path, PrintStream stream) throws IOException {
-        stream.println(highlight(path));
-    }
-
-    @Override
-    public void print(Path path) throws IOException {
-        print(path, System.out);
-    }
-
-
-
     String tryStyleString(CompilationUnit unit, TokenRange tokenRange){
         Set<JavaToken> methodNames = findMethodAndConstructorIdentifiers(unit);
         Set<JavaToken> typeTokens = findTypeDefinitions(unit);
