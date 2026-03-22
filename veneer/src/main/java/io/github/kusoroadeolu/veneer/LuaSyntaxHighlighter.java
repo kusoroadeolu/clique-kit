@@ -1,6 +1,7 @@
 package io.github.kusoroadeolu.veneer;
 
 import io.github.kusoroadeolu.clique.Clique;
+import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
@@ -11,6 +12,9 @@ import org.antlr.v4.runtime.Token;
 import java.util.List;
 
 import static io.github.kusoroadeolu.veneer.LuaLexer.*;
+import static io.github.kusoroadeolu.veneer.Utils.isNullOrBlank;
+import static io.github.kusoroadeolu.veneer.Utils.styleMultiLineToken;
+
 import io.github.kusoroadeolu.veneer.LuaLexer;
 
 public class LuaSyntaxHighlighter implements SyntaxHighlighter{
@@ -36,12 +40,11 @@ public class LuaSyntaxHighlighter implements SyntaxHighlighter{
 
     @Override
     public String highlight(String s) {
-        if (s == null || s.isBlank()) return "";
+        if (isNullOrBlank(s)) return "";
+
         StyleBuilder sb = Clique.styleBuilder();
         LuaLexer lexer = new LuaLexer(CharStreams.fromString(s));
-        lexer.removeErrorListeners();
-        BufferedTokenStream tokenStream = new BufferedTokenStream(lexer);
-        tokenStream.fill();
+        var tokenStream = Utils.toTokenStream(lexer);
         if (showLineNumbers) applyWithLines(sb, tokenStream);
         else applyWithoutLines(sb, tokenStream);
         return sb.get();
@@ -55,37 +58,22 @@ public class LuaSyntaxHighlighter implements SyntaxHighlighter{
     }
 
     public void applyWithLines(StyleBuilder sb, BufferedTokenStream tokenStream){
-        int[] lineCount = new int[]{1};
-        sb.append(Utils.formatNoTo3dp(lineCount[0]), theme.gutter());
+        int[] lineNumber = new int[1];
+        sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
 
         for (Token token : tokenStream.getTokens()){
             if (isMultiLineToken(token)){
-                List<String> comments = token.getText().lines().toList();
-                for (int i = 0; i < comments.size(); ++i) {
-                    if (i > 0){
-                        sb.append("\n");
-                        sb.append(Utils.formatNoTo3dp(++lineCount[0]), theme.gutter());
-                    }
-                    var c = comments.get(i);
-                    sb.append(c, theme.comment());
-                }
-
-                continue;
-            }
-
-            if (token.getType() == NL){
+                styleMultiLineToken(token, lineNumber, sb, theme.gutter(), this::applyStyles);
+            }else if (token.getType() == NL){
                 applyStyles(token, sb);
-                sb.append(Utils.formatNoTo3dp(++lineCount[0]), theme.gutter());
-                continue;
-            }
-
-            applyStyles(token, sb);
+                sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
+            }else applyStyles(token, sb);
         }
     }
 
 
     void applyStyles(Token token, StyleBuilder sb){
-        if (isKeyWord(token)){
+        if (isKeyword(token)){
             sb.append(token.getText(), theme.keyword());
         }else if (isStringLiteral(token)){
             sb.append(token.getText(), theme.stringLiteral());
@@ -93,16 +81,13 @@ public class LuaSyntaxHighlighter implements SyntaxHighlighter{
             sb.append(token.getText(), theme.numberLiteral());
         }else if (isComment(token)) {
             sb.append(token.getText(), theme.comment());
-        } else if (token.getType() == Token.EOF) {
-
-        }else {
-                sb.append(token.getText());
-            }
+        } else if (!isEOF(token)) {
+            sb.append(token.getText());
+        }
     }
 
 
-
-    boolean isKeyWord(Token token){
+    boolean isKeyword(Token token){
         int type = token.getType();
         return type >= BREAK && type <= FOR
                 || type >= IN && type <= LOCAL
@@ -122,7 +107,13 @@ public class LuaSyntaxHighlighter implements SyntaxHighlighter{
         return token.getType() ==  COMMENT;
     }
 
+
+    //The lua lexer doesn't give us a long comment token to work with so we're stuck using normal comments unlike how a long string token is given
     boolean isMultiLineToken(Token token){
-        return isComment(token);
+        return isComment(token) || token.getType() == LONGSTRING;
+    }
+
+    boolean isEOF(Token token){
+        return token.getType() == Token.EOF;
     }
 }

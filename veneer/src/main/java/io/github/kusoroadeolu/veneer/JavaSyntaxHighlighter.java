@@ -17,7 +17,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.github.javaparser.GeneratedJavaParserConstants.*;
+import static io.github.kusoroadeolu.clique.core.utils.Constants.NEWLINE;
 import static io.github.kusoroadeolu.veneer.Utils.formatNoTo3dp;
+import static io.github.kusoroadeolu.veneer.Utils.isNullOrBlank;
 
 public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     private final JavaParser parser;
@@ -47,7 +49,8 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
 
     @Override
     public String highlight(String s) {
-        if (s == null || s.isBlank()) return "";
+        if (isNullOrBlank(s)) return "";
+
         ParseResult<CompilationUnit> result = parser.parse(s);
         Optional<CompilationUnit> opUnit = result.getResult();
         if (opUnit.isEmpty()) return s;
@@ -83,7 +86,7 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
             }
 
             //If we're the first token otherwise, if the prev token was an EOL
-            if (token.getPreviousToken().isEmpty() || isEOL(token.getPreviousToken().get())){
+            if (startsOnNewLine(token)){
                 appendLineNo(++lineNo[0], sb);
             }
 
@@ -126,21 +129,19 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     }
 
     void styleMultiLineContent(JavaToken token, int[] lineNo, StyleBuilder sb, AstBundle astBundle){
-        List<CustomJavaToken> tokens = token.getText()
+        List<FragmentJavaToken> tokens = token.getText()
                 .lines()
-                .map(text -> new CustomJavaToken(token.getKind(), text))
+                .map(text -> new FragmentJavaToken(token.getKind(), text))
                 .toList();
 
         int size = tokens.size();
 
-        boolean startsOnNewLine = token.getPreviousToken().isEmpty() || isEOL(token.getPreviousToken().get());
-
         for (int i = 0; i < size; ++i) {
             var custom = tokens.get(i);
-            if (i == 0 && startsOnNewLine) {
+            if (i == 0 && startsOnNewLine(token)) {
                 appendLineNo(++lineNo[0], sb);
             } else if (i > 0) {
-                sb.append("\n");
+                sb.append(NEWLINE);
                 appendLineNo(++lineNo[0], sb);
             }
 
@@ -249,6 +250,10 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     //Helper for line counting
     boolean isMultiLineToken(JavaToken token){
         return token.getKind() == ENTER_MULTILINE_COMMENT || token.getKind() == ENTER_JAVADOC_COMMENT ||  token.getKind() == MULTI_LINE_COMMENT || token.getKind() == JAVADOC_COMMENT || token.getKind() == TEXT_BLOCK_LITERAL || token.getKind() == TEXT_BLOCK_CONTENT;
+    }
+
+    boolean startsOnNewLine(JavaToken token){
+        return token.getPreviousToken().isEmpty() || isEOL(token.getPreviousToken().get());
     }
 
     boolean isEOL(JavaToken token){

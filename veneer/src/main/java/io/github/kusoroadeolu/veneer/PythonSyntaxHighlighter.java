@@ -1,13 +1,16 @@
 package io.github.kusoroadeolu.veneer;
 
 import io.github.kusoroadeolu.clique.Clique;
+import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
-import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 import io.github.kusoroadeolu.veneer.PythonLexer;
+
+
+import static io.github.kusoroadeolu.veneer.Utils.*;
 
 public class PythonSyntaxHighlighter implements SyntaxHighlighter {
 
@@ -34,34 +37,34 @@ public class PythonSyntaxHighlighter implements SyntaxHighlighter {
 
     @Override
     public String highlight(String s) {
-        if (s == null || s.isBlank()) return "";
+        if (isNullOrBlank(s)) return "";
+
         StyleBuilder sb = Clique.styleBuilder();
         PythonLexer lexer = new PythonLexer(CharStreams.fromString(s));
-        BufferedTokenStream tokenStream = new BufferedTokenStream(lexer);
-        tokenStream.fill();
-        int lineNumber = 0;
+        var tokenStream = Utils.toTokenStream(lexer);
+        int[] lineNumber = new int[1];
+        sb.append(formatNoTo3dp(++lineNumber[0]) , theme.gutter());
+
         for (Token token : tokenStream.getTokens()) {
             if (token.getType() == PythonLexer.NEWLINE && showLineNumbers) {
-                sb.append("\n");
-                lineNumber++;
-                sb.append(Utils.formatNoTo3dp(lineNumber) , theme.gutter());
+                sb.append(Constants.NEWLINE);
+                sb.append(formatNoTo3dp(++lineNumber[0]), theme.gutter());
+            } else if(isMultiLineToken(token)){
+                styleMultiLineToken(token, lineNumber, sb, theme.gutter(), this::applyStyles);
             } else {
-                applyStyle(token, sb);
+                applyStyles(token, sb);
             }
         }
         return sb.get();
     }
 
-    void applyStyle(Token token, StyleBuilder sb) {
+    void applyStyles(Token token, StyleBuilder sb) {
         if (token.getType() == Token.EOF) return;
-        if (token.getType() == PythonLexer.INDENT || token.getType() == PythonLexer.DEDENT) return;
-        if (token.getChannel() == Token.HIDDEN_CHANNEL && token.getType() != PythonLexer.WS) return;
+        else if (token.getType() == PythonLexer.INDENT || token.getType() == PythonLexer.DEDENT) return;
+        else if (token.getChannel() == Token.HIDDEN_CHANNEL && token.getType() != PythonLexer.WS) return;
 
         String text = token.getText();
-
-        if (isWhitespace(token)) {
-            sb.append(text);
-        } else if (isComment(token)) {
+        if (isComment(token)) {
             sb.append(text, theme.comment());
         } else if (isString(token)) {
             sb.append(text, theme.stringLiteral());
@@ -100,6 +103,11 @@ public class PythonSyntaxHighlighter implements SyntaxHighlighter {
                 || t == PythonLexer.FSTRING_START
                 || t == PythonLexer.FSTRING_MIDDLE
                 || t == PythonLexer.FSTRING_END;
+    }
+
+    boolean isMultiLineToken(Token token){
+        int t = token.getType();
+        return t == PythonLexer.FSTRING_MIDDLE || isComment(token) || t == PythonLexer.STRING;
     }
 
     boolean isNumber(Token token) {
