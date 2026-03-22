@@ -22,7 +22,7 @@ class JavaSyntaxHighlighterTest {
 
     @Test
     //Here i'm using the default style so i'll be testing against that
-    public void highlight_onValidSyntax_shouldReturnStyledString(){
+    public void highlight_onCompleteSyntax_shouldBeStyled(){
         String codeSnippet = """
             @SuppressWarnings("unchecked")
             public class Example {
@@ -47,7 +47,7 @@ class JavaSyntaxHighlighterTest {
     }
 
     @Test
-    public void highlightCompleteSyntax_onIncompleteSyntax_shouldReturnStyledString(){
+    public void highlight_onIncompleteSyntax_shouldBeStyled(){
         String codeSnippet = """
             void main(){
                 int a = 1;
@@ -59,21 +59,6 @@ class JavaSyntaxHighlighterTest {
         //This wont render the method name correctly
         assertTrue(list.getFirst().contains(SyntaxThemes.DEFAULT.keyword().toString()));
         assertTrue(list.get(1).contains(SyntaxThemes.DEFAULT.keyword().toString()));
-    }
-
-    @Test
-    public void highlightIncompleteSyntax_withLinesEnabled_shouldCorrectlyFormatLines(){
-        String codeSnippet = """
-            @SuppressWarnings("unchecked")
-            public class Example {
-            }
-            """;
-        var highlighter1 = new JavaSyntaxHighlighter();
-        String styled = highlighter1.highlight(codeSnippet);
-        List<String> list = styled.lines().toList();
-        assertTrue(list.getFirst().contains("1"));
-        assertTrue(list.getFirst().contains("2"));
-        assertTrue(list.get(1).contains("3"));
     }
 
     @Test
@@ -105,6 +90,15 @@ class JavaSyntaxHighlighterTest {
         List<String> list = styled.lines().toList();
         assertTrue(list.get(1).contains(SyntaxThemes.DEFAULT.keyword().toString()));
     }
+
+    @Test
+    void highlight_nullOrBlank_shouldReturnEmpty() {
+        String s = null;
+        assertTrue(highlighter.highlight(s).isEmpty());
+        assertTrue(highlighter.highlight("").isEmpty());
+        assertTrue(highlighter.highlight("   ").isEmpty());
+    }
+
 
 
 }

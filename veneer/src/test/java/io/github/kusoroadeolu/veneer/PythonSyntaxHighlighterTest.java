@@ -1,7 +1,5 @@
 package io.github.kusoroadeolu.veneer;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,20 +7,22 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-class JavaScriptSyntaxHighlighterTest {
-
-    private JavaScriptSyntaxHighlighter highlighter;
+class PythonSyntaxHighlighterTest {
+    private SyntaxHighlighter highlighter;
 
     @BeforeEach
     void setUp() {
-        highlighter = new JavaScriptSyntaxHighlighter(false);
+        highlighter = new PythonSyntaxHighlighter(false);
     }
 
     @Test
     void highlight_keywords_shouldBeStyled() {
-        String snippet = "const x = 1;";
+        String snippet = """
+            def greet():
+                return "hello"
+            """;
         String styled = highlighter.highlight(snippet);
         assertTrue(styled.contains(SyntaxThemes.DEFAULT.keyword().toString()));
     }
@@ -30,16 +30,17 @@ class JavaScriptSyntaxHighlighterTest {
     @Test
     void highlight_stringLiteral_shouldBeStyled() {
         String snippet = """
-            const msg = "hello";
+            msg = "hello world"
             """;
         String styled = highlighter.highlight(snippet);
         assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
     }
 
     @Test
-    void highlight_templateLiteral_shouldBeStyled() {
+    void highlight_fString_shouldBeStyled() {
         String snippet = """
-            const msg = `hello world`;
+            name = "world"
+            msg = f"hello {name}"
             """;
         String styled = highlighter.highlight(snippet);
         assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
@@ -48,31 +49,39 @@ class JavaScriptSyntaxHighlighterTest {
     @Test
     void highlight_numberLiterals_shouldBeStyled() {
         String snippet = """
-            const a = 42;
-            const b = 0xFF;
-            const c = 0b1010;
-            const d = 0o77;
-            const e = 100n;
+            a = 42
+            b = 3.14
+            c = 0xFF
+            d = 0b1010
+            e = 0o77
             """;
         String styled = highlighter.highlight(snippet);
         assertTrue(styled.contains(SyntaxThemes.DEFAULT.numberLiteral().toString()));
     }
 
     @Test
-    void highlight_comments_shouldBeStyled() {
+    void highlight_singleLineComment_shouldBeStyled() {
         String snippet = """
-            // single line
-            /* multi
-               line */
+            # this is a comment
             """;
         String styled = highlighter.highlight(snippet);
         assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().toString()));
     }
 
     @Test
+    void highlight_annotation_shouldBeStyled() {
+        String snippet = """
+            @staticmethod
+            def greet():
+                pass
+            """;
+        String styled = highlighter.highlight(snippet);
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.annotation().toString()));
+    }
+
+    @Test
     void highlight_nullOrBlank_shouldReturnEmpty() {
-        String s = null;
-        assertTrue(highlighter.highlight(s).isEmpty());
+        assertTrue(highlighter.highlight((String) null).isEmpty());
         assertTrue(highlighter.highlight("").isEmpty());
         assertTrue(highlighter.highlight("   ").isEmpty());
     }
@@ -80,32 +89,15 @@ class JavaScriptSyntaxHighlighterTest {
     @Test
     void highlight_withLineNumbers_shouldFormatCorrectly() {
         String snippet = """
-            const a = 1;
-            const b = 2;
-            const c = 3;
+            a = 1
+            b = 2
+            c = 3
             """;
-        var lineHighlighter = new JavaScriptSyntaxHighlighter();
+        var lineHighlighter = new PythonSyntaxHighlighter();
         String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
         List<String> lines = styled.lines().toList();
         assertTrue(lines.getFirst().contains("1"));
         assertTrue(lines.get(1).contains("2"));
         assertTrue(lines.get(2).contains("3"));
-    }
-
-    @Test
-    void highlight_multilineComment_withLineNumbers_shouldFormatCorrectly() {
-        String snippet = """
-            /* line one
-               line two
-               line three */
-            const x = 1;
-            """;
-        var lineHighlighter = new JavaScriptSyntaxHighlighter();
-        String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
-        List<String> lines = styled.lines().toList();
-        assertTrue(lines.getFirst().contains("1"));
-        assertTrue(lines.get(1).contains("2"));
-        assertTrue(lines.get(2).contains("3"));
-        assertTrue(lines.get(3).contains("4"));
     }
 }
