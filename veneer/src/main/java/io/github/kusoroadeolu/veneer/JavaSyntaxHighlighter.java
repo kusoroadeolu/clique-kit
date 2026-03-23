@@ -11,10 +11,7 @@ import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.github.javaparser.GeneratedJavaParserConstants.*;
 import static io.github.kusoroadeolu.clique.core.utils.Constants.NEWLINE;
@@ -208,11 +205,11 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     }
 
     boolean isConstant(JavaToken token, Set<JavaToken> constants){
-        return constants.contains(token);
+        return tokenAndRangeEqual(token, constants);
     }
 
     boolean isTypeToken(JavaToken token, Set<JavaToken> typeTokens) {
-        return typeTokens.contains(token);
+        return tokenAndRangeEqual(token, typeTokens);
     }
 
     void appendLineNo(int lineNo, StyleBuilder sb){
@@ -220,7 +217,7 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     }
 
     boolean isMethodOrConstructorIdentifier(JavaToken token, Set<JavaToken> methodTokens){
-        return methodTokens.contains(token);
+        return tokenAndRangeEqual(token, methodTokens);
     }
 
     boolean isKeyword(JavaToken token){
@@ -262,6 +259,27 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
 
     boolean isAnnotation(JavaToken token){
         return token.getKind() == JavaToken.Kind.AT.getKind();
+    }
+
+    boolean tokenAndRangeEqual(JavaToken token, Collection<JavaToken> tokens){
+        Optional<Range> tokenRange = token.getRange();
+
+        for (JavaToken jToken : tokens){
+            if (!jToken.equals(token)) continue;
+
+            Optional<Range> jTokenRange = jToken.getRange();
+
+            // Both must have ranges and they must match, or both must have no range
+            if (tokenRange.isPresent() && jTokenRange.isPresent()) {
+                if (tokenRange.get().equals(jTokenRange.get())) {
+                    return true;
+                }
+            } else if (tokenRange.isEmpty() && jTokenRange.isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //Since idk what to name this tbh, this is just a wrapper class to hold tokens/strings gotten from walking the ast, that we couldnt have normally styled from the token range

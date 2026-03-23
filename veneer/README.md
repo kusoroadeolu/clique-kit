@@ -139,10 +139,6 @@ public class MyTheme implements SyntaxTheme {
 
 **Partial or invalid code** — keywords, strings, literals, comments, and annotations are token-based and always highlight correctly. Method names, types, and constants require a successful AST walk, so they may fall back to unstyled text on incomplete snippets.
 
-**Method name matches a type name** — type coloring takes priority in ambiguous cases (e.g. `public void List() {}`). Uncommon in practice.
-
-**Local variable matches a method name** — the variable may be colored as a method. Full resolution would require symbol analysis, which is out of scope.
-
 ### Python
 
 **Soft keywords** — `match`, `case`, and `type` are always styled as keywords, even when used as variable names.
