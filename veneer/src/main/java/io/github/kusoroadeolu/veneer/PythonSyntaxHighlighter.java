@@ -5,12 +5,12 @@ import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
+import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
-import io.github.kusoroadeolu.veneer.PythonLexer;
 
 
-import static io.github.kusoroadeolu.veneer.Utils.*;
+import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 
 public class PythonSyntaxHighlighter implements SyntaxHighlighter {
 

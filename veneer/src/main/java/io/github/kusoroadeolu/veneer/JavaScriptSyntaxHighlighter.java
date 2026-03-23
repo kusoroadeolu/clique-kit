@@ -1,16 +1,13 @@
 package io.github.kusoroadeolu.veneer;
 import io.github.kusoroadeolu.clique.Clique;
-import io.github.kusoroadeolu.clique.spi.AnsiCode;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
-import io.github.kusoroadeolu.veneer.JavaScriptLexer;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
-import org.antlr.v4.runtime.BufferedTokenStream;
+import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 
-import static io.github.kusoroadeolu.clique.core.utils.Constants.NEWLINE;
-import static io.github.kusoroadeolu.veneer.Utils.*;
+import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 
 public class JavaScriptSyntaxHighlighter implements SyntaxHighlighter{
     private final boolean showLineNumbers;

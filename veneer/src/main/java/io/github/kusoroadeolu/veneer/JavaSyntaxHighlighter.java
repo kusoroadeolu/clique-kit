@@ -3,20 +3,26 @@ package io.github.kusoroadeolu.veneer;
 import com.github.javaparser.*;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumConstantDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
+import io.github.kusoroadeolu.veneer.utils.FragmentJavaToken;
+import io.github.kusoroadeolu.veneer.utils.PositionalJavaToken;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.github.javaparser.GeneratedJavaParserConstants.*;
 import static io.github.kusoroadeolu.clique.core.utils.Constants.NEWLINE;
-import static io.github.kusoroadeolu.veneer.Utils.formatNoTo3dp;
-import static io.github.kusoroadeolu.veneer.Utils.isNullOrBlank;
+import static io.github.kusoroadeolu.veneer.utils.Utils.formatNoTo3dp;
+import static io.github.kusoroadeolu.veneer.utils.Utils.isNullOrBlank;
 
 public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     private final JavaParser parser;
@@ -61,9 +67,9 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
     }
 
     String tryStyleString(CompilationUnit unit, TokenRange tokenRange){
-        Set<JavaToken> methodNames = findMethodAndConstructorIdentifiers(unit);
-        Set<JavaToken> typeTokens = findTypeDefinitions(unit);
-        Set<JavaToken> constants = findConstants(unit);
+        Set<PositionalJavaToken> methodNames = findMethodAndConstructorIdentifiers(unit);
+        Set<PositionalJavaToken> typeTokens = findTypeDefinitions(unit);
+        Set<PositionalJavaToken> constants = findConstants(unit);
         var bundle = new AstBundle(methodNames, typeTokens, constants);
         StyleBuilder sb = Clique.styleBuilder();
 
@@ -146,22 +152,22 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
         }
     }
 
-
-    Set<JavaToken> findTypeDefinitions(CompilationUnit unit){
-        var typeTokens = new HashSet<JavaToken>();
+    //Finds type defs
+    Set<PositionalJavaToken> findTypeDefinitions(CompilationUnit unit){
+        var typeTokens = new HashSet<PositionalJavaToken>();
         unit.findAll(ClassOrInterfaceType.class).forEach(t ->
                 t.getTokenRange().ifPresent(r -> {
             for (JavaToken token : r) {
                 if (token.getKind() == IDENTIFIER)
-                    typeTokens.add(token);
+                    typeTokens.add(PositionalJavaToken.of(token));
             }
         }));
         return typeTokens;
     }
 
-
-    Set<JavaToken> findConstants(CompilationUnit unit){
-        var constantTokens = new HashSet<JavaToken>();
+    //Finds static final fields or enum vars
+    Set<PositionalJavaToken> findConstants(CompilationUnit unit){
+        var constantTokens = new HashSet<PositionalJavaToken>();
         unit.findAll(FieldDeclaration.class).stream()
                 .filter(f -> f.isStatic() && f.isFinal())
                 .forEach(f -> f.getVariables().forEach(v ->
@@ -169,27 +175,27 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
                                 .ifPresent(r -> {
                     for (JavaToken token : r) {
                         if (token.getKind() == IDENTIFIER)
-                            constantTokens.add(token);
+                            constantTokens.add(PositionalJavaToken.of(token));
                     }
                 })));
 
-        unit.findAll(com.github.javaparser.ast.body.EnumConstantDeclaration.class).forEach(e ->
+        unit.findAll(EnumConstantDeclaration.class).forEach(e ->
                 e.getName().getTokenRange().ifPresent(r -> {
                     for (JavaToken token : r)
                         if (token.getKind() == IDENTIFIER)
-                            constantTokens.add(token);
+                            constantTokens.add(PositionalJavaToken.of(token));
                 }));
         return constantTokens;
     }
 
     //Find valid method identifiers
-    Set<JavaToken> findMethodAndConstructorIdentifiers(CompilationUnit unit){
-        var methodTokens = new HashSet<JavaToken>();
+    Set<PositionalJavaToken> findMethodAndConstructorIdentifiers(CompilationUnit unit){
+        var methodTokens = new HashSet<PositionalJavaToken>();
         unit.findAll(MethodDeclaration.class).forEach(m ->
                 m.getName().getTokenRange().ifPresent(r -> {
                     for (JavaToken token : r) {
                         if (token.getKind() == IDENTIFIER)
-                            methodTokens.add(token);
+                            methodTokens.add(PositionalJavaToken.of(token));
                     }
                 }));
 
@@ -197,18 +203,18 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
                 c.getName().getTokenRange().ifPresent(r -> {
                     for (JavaToken token : r) {
                         if (token.getKind() == IDENTIFIER)
-                            methodTokens.add(token);
+                            methodTokens.add(PositionalJavaToken.of(token));
                     }
                 }));
 
         return methodTokens;
     }
 
-    boolean isConstant(JavaToken token, Set<JavaToken> constants){
+    boolean isConstant(JavaToken token, Set<PositionalJavaToken> constants){
         return tokenAndRangeEqual(token, constants);
     }
 
-    boolean isTypeToken(JavaToken token, Set<JavaToken> typeTokens) {
+    boolean isTypeToken(JavaToken token, Set<PositionalJavaToken> typeTokens) {
         return tokenAndRangeEqual(token, typeTokens);
     }
 
@@ -216,7 +222,7 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
         sb.append(formatNoTo3dp(lineNo), theme.gutter());
     }
 
-    boolean isMethodOrConstructorIdentifier(JavaToken token, Set<JavaToken> methodTokens){
+    boolean isMethodOrConstructorIdentifier(JavaToken token, Set<PositionalJavaToken> methodTokens){
         return tokenAndRangeEqual(token, methodTokens);
     }
 
@@ -261,29 +267,12 @@ public class JavaSyntaxHighlighter implements SyntaxHighlighter{
         return token.getKind() == JavaToken.Kind.AT.getKind();
     }
 
-    boolean tokenAndRangeEqual(JavaToken token, Collection<JavaToken> tokens){
-        Optional<Range> tokenRange = token.getRange();
-
-        for (JavaToken jToken : tokens){
-            if (!jToken.equals(token)) continue;
-
-            Optional<Range> jTokenRange = jToken.getRange();
-
-            // Both must have ranges and they must match, or both must have no range
-            if (tokenRange.isPresent() && jTokenRange.isPresent()) {
-                if (tokenRange.get().equals(jTokenRange.get())) {
-                    return true;
-                }
-            } else if (tokenRange.isEmpty() && jTokenRange.isEmpty()) {
-                return true;
-            }
-        }
-
-        return false;
+    boolean tokenAndRangeEqual(JavaToken token, Set<PositionalJavaToken> tokens){
+        return tokens.contains(PositionalJavaToken.of(token));
     }
 
     //Since idk what to name this tbh, this is just a wrapper class to hold tokens/strings gotten from walking the ast, that we couldnt have normally styled from the token range
-    private record AstBundle(Set<JavaToken> mcIdentifiers, Set<JavaToken> typeDef, Set<JavaToken> constants){
+    private record AstBundle(Set<PositionalJavaToken> mcIdentifiers, Set<PositionalJavaToken> typeDef, Set<PositionalJavaToken> constants){
 
     }
 

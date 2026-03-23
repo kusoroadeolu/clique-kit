@@ -5,12 +5,12 @@ import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
+import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.*;
 
 import java.util.List;
-import io.github.kusoroadeolu.veneer.GoLexer;
 
-import static io.github.kusoroadeolu.veneer.Utils.*;
+import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 
 public class GoSyntaxHighlighter implements SyntaxHighlighter {
 

@@ -1,21 +1,17 @@
 package io.github.kusoroadeolu.veneer;
 
 import io.github.kusoroadeolu.clique.Clique;
-import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
+import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 
-import java.util.List;
-
 import static io.github.kusoroadeolu.veneer.LuaLexer.*;
-import static io.github.kusoroadeolu.veneer.Utils.isNullOrBlank;
-import static io.github.kusoroadeolu.veneer.Utils.styleMultiLineToken;
-
-import io.github.kusoroadeolu.veneer.LuaLexer;
+import static io.github.kusoroadeolu.veneer.utils.Utils.isNullOrBlank;
+import static io.github.kusoroadeolu.veneer.utils.Utils.styleMultiLineToken;
 
 public class LuaSyntaxHighlighter implements SyntaxHighlighter{
     private final SyntaxTheme theme;

@@ -1,10 +1,10 @@
-package io.github.kusoroadeolu.veneer;
+package io.github.kusoroadeolu.veneer.utils;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenSource;
 
-record FragmentToken(Token origin, String text) implements Token {
+public record FragmentToken(Token origin, String text) implements Token {
 
         @Override
         public String getText() {
