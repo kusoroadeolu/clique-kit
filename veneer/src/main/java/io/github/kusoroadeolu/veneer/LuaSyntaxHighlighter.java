@@ -8,6 +8,7 @@ import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
+import io.github.kusoroadeolu.veneer.LuaLexer;
 
 import static io.github.kusoroadeolu.veneer.LuaLexer.*;
 import static io.github.kusoroadeolu.veneer.utils.Utils.isNullOrBlank;

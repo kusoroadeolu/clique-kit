@@ -132,14 +132,14 @@ abstract class PythonLexerBase extends Lexer {
 
     private void setCurrentAndFollowingTokens() {
         this.curToken = this.ffgToken == null ?
-                        super.nextToken() :
-                        this.ffgToken;
+                super.nextToken() :
+                this.ffgToken;
 
         this.checkCurToken(); // ffgToken cannot be used in this method and its sub methods (ffgToken is not yet set)!
 
         this.ffgToken = this.curToken.getType() == Token.EOF ?
-                        this.curToken :
-                        super.nextToken();
+                this.curToken :
+                super.nextToken();
     }
 
     private void insertENCODINGtoken() { // https://peps.python.org/pep-0263/
@@ -216,7 +216,8 @@ abstract class PythonLexerBase extends Lexer {
     private void insertLeadingIndentToken() {
         if (this.previousPendingTokenType == PythonLexer.WS) {
             Token prevToken = this.pendingTokens.peekLast(); // WS token
-            if (this.getIndentationLength(prevToken.getText()) != 0) { // there is an "indentation" before the first statement
+
+            if (prevToken != null && this.getIndentationLength(prevToken.getText()) != 0) { // there is an "indentation" before the first statement
                 final String errMsg = "first statement indented";
                 this.reportLexerError(errMsg);
                 // insert an INDENT token before the first statement to raise an 'unexpected indent' error later by the parser
@@ -249,8 +250,8 @@ abstract class PythonLexerBase extends Lexer {
                     this.addPendingToken(nlToken);
                     if (isLookingAhead) { // We're on a whitespace(s) followed by a statement
                         final int indentationLength = this.ffgToken.getType() == Token.EOF ?
-                                                      0 :
-                                                      this.getIndentationLength(this.curToken.getText());
+                                0 :
+                                this.getIndentationLength(this.curToken.getText());
 
                         if (indentationLength != this.INVALID_LENGTH) {
                             this.addPendingToken(this.curToken); // WS token
@@ -266,15 +267,15 @@ abstract class PythonLexerBase extends Lexer {
     }
 
     private void insertIndentOrDedentToken(final int indentLength) {
-        int prevIndentLength = this.indentLengthStack.peek();
-        if (indentLength > prevIndentLength) {
+        Integer prevIndentLength = this.indentLengthStack.peek();
+        if (prevIndentLength != null && indentLength > prevIndentLength) {
             this.createAndAddPendingToken(PythonLexer.INDENT, Token.DEFAULT_CHANNEL, null, this.ffgToken);
             this.indentLengthStack.push(indentLength);
         } else {
-            while (indentLength < prevIndentLength) { // more than 1 DEDENT token may be inserted to the token stream
+            while (prevIndentLength != null && indentLength < prevIndentLength) { // more than 1 DEDENT token may be inserted to the token stream
                 this.indentLengthStack.pop();
                 prevIndentLength = this.indentLengthStack.peek();
-                if (indentLength <= prevIndentLength) {
+                if (prevIndentLength != null && indentLength <= prevIndentLength) {
                     this.createAndAddPendingToken(PythonLexer.DEDENT, Token.DEFAULT_CHANNEL, null, this.ffgToken);
                 } else {
                     this.reportError("inconsistent dedent");
@@ -401,7 +402,8 @@ abstract class PythonLexerBase extends Lexer {
     }
 
     private void setLexerModeByCOLONorCOLONEQUALtoken() {
-        if (this.paren_or_bracket_openedStack.peek() == 0) {
+        Integer peeked = this.paren_or_bracket_openedStack.peek();
+        if (peeked != null && peeked == 0) {
             // COLONEQUAL token will be replaced with a COLON token in checkNextToken()
             switch (this.lexerModeStack.peek()) { // check the previous lexer mode (the current is DEFAULT_MODE)
                 case PythonLexer.SQ1__FSTRING_MODE:
@@ -493,7 +495,7 @@ abstract class PythonLexerBase extends Lexer {
 
     private void handleCOLONEQUALtokenInFString() {
         if (!this.lexerModeStack.isEmpty() &&
-            this.paren_or_bracket_openedStack.peek() == 0) {
+                this.paren_or_bracket_openedStack.peek() == 0) {
 
             // In fstring a colonequal (walrus operator) can only be used in parentheses
             // Not in parentheses, replace COLONEQUAL token with COLON as format specifier
@@ -541,7 +543,7 @@ abstract class PythonLexerBase extends Lexer {
 
     private void handleFORMAT_SPECIFICATION_MODE() {
         if (!this.lexerModeStack.isEmpty() &&
-            this.ffgToken.getType() == PythonLexer.RBRACE) {
+                this.ffgToken.getType() == PythonLexer.RBRACE) {
 
             // insert an empty FSTRING_MIDDLE token instead of the missing format specification
             switch (this.curToken.getType()) {
@@ -585,8 +587,8 @@ abstract class PythonLexerBase extends Lexer {
         ctkn.setChannel(channel);
         ctkn.setStopIndex(sampleToken.getStartIndex() - 1);
         ctkn.setText(text == null ?
-                     "<" + this.getVocabulary().getDisplayName(ttype) + ">" :
-                     text);
+                "<" + this.getVocabulary().getDisplayName(ttype) + ">" :
+                text);
 
         this.addPendingToken(ctkn);
     }

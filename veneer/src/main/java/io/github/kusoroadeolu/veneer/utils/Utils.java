@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 public class Utils {
+
+
     private Utils(){
     }
 
@@ -40,5 +42,18 @@ public class Utils {
             applyStyle.accept(new FragmentToken(token, lines.get(i)), sb);
         }
     }
+
+    public static void styleMultiLineToken(Token token, int[] lineNumber, StyleBuilder sb,
+                                           AnsiCode gutter, Token prev , TriConsumer<Token, StyleBuilder, Token> applyStyle) {
+        List<String> lines = token.getText().lines().toList();
+        for (int i = 0; i < lines.size(); i++) {
+            if (i > 0) {
+                sb.append(Constants.NEWLINE);
+                sb.append(Utils.formatNoTo3dp(++lineNumber[0]), gutter);
+            }
+            applyStyle.accept(new FragmentToken(token, lines.get(i)), sb, prev);
+        }
+    }
+
 
 }

@@ -9,6 +9,7 @@ import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.*;
 
 import java.util.List;
+import io.github.kusoroadeolu.veneer.GoLexer;
 
 import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 

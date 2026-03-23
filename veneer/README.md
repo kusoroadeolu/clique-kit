@@ -18,7 +18,7 @@ Syntax highlighting for Java, Python, Go, Lua, and JavaScript via ANSI color cod
 <dependency>
     <groupId>io.github.kusoroadeolu</groupId>
     <artifactId>veneer</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -104,6 +104,8 @@ public class MyTheme implements SyntaxTheme {
 | Numbers    | `42`, `3.14`, `0xFF`                                  |
 | Comments   | `# comment`                                           |
 | Annotations| `@staticmethod`, `@property`                          |
+| Methods    | Declared function names                               |
+| Constants  | Names matching `ALL_CAPS` convention                  |
 
 ### Go
 | Category   | Examples                                              |

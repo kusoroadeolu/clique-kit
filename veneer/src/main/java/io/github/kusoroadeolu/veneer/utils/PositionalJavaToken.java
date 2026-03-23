@@ -6,6 +6,7 @@ import com.github.javaparser.Range;
 import java.util.Objects;
 import java.util.Optional;
 
+//Pos token for java parser
 public record PositionalJavaToken(JavaToken token, Optional<Range> range) {
     @Override
     public boolean equals(Object o) {
@@ -19,7 +20,7 @@ public record PositionalJavaToken(JavaToken token, Optional<Range> range) {
         return Objects.hash(token, range);
     }
 
-    static PositionalJavaToken of(JavaToken token){
+    public static PositionalJavaToken of(JavaToken token){
         return new PositionalJavaToken(token, token.getRange());
     }
 }

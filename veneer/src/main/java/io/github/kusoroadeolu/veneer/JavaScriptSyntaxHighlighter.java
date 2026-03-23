@@ -6,6 +6,7 @@ import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
+import io.github.kusoroadeolu.veneer.JavaScriptLexer;
 
 import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 

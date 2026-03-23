@@ -3,45 +3,40 @@ package io.github.kusoroadeolu.veneer;
 public class Main {
     public static void main(String[] args) {
         String code = """
-                public class QuirkTest {
-                
-                    // Quirk 1: 'var' as variable name (legal but will style as keyword)
-                    public void testVarAsIdentifier() {
-                        int var = 42;  // 'var' used as variable name
-                        System.out.println(var);
-                    }
-                
-                    // Quirk 2: Method name matches type name
-                    public void List() {  // method named 'List'
-                        System.out.println("Method called List");
-                    }
-                
-                    public void testListMethod() {
-                        List();  // calling the method
-                        java.util.List<String> list = new ArrayList<>();  // actual List type
-                    }
-                
-                    // Quirk 3: Local variable matches method name
-                    public void calculate() {
-                        return 100;
-                    }
-                
-                    public void testVariableMatchesMethod() {
-                        int calculate = 50;  // variable named same as method
-                        System.out.println(calculate);
-                        System.out.println(calculate());  // actual method call
-                    }
-                
-                    // Bonus: 'var' as actual keyword (should always work)
-                    public void testVarKeyword() {
-                        var message = "Hello";
-                        var number = 42;
-                        var list = new ArrayList<String>();
-                    }
-                }
-                """;
+        MAX_RETRIES = 3
+        API_KEY = "abc123"
+        DEFAULT_TIMEOUT = 30
+        
+        class HttpClient:
+            def __init__(self, base_url: str, timeout: int = DEFAULT_TIMEOUT):
+                self.base_url = base_url
+                self.timeout = timeout
+        
+            def get(self, path: str) -> dict:
+                retries = 0
+                while retries < MAX_RETRIES:
+                    retries += 1
+                return {}
+        
+            def post(self, path: str, body: dict) -> dict:
+                return {}
+        
+        
+        def build_client(url: str, timeout: int = DEFAULT_TIMEOUT) -> HttpClient:
+            # validates and builds a client
+            if not url:
+                raise ValueError("url cannot be empty")
+            return HttpClient(url, timeout)
+        
+        
+        def parse_response(data: dict) -> list:
+            result = []
+            for item in data.get("items", []):
+                result.append(item)
+            return result
+        """;
 
-        new JavaSyntaxHighlighter().print(code);
+        new PythonSyntaxHighlighter().print(code);
 
     }
 }
