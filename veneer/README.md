@@ -9,8 +9,6 @@ Syntax highlighting for Java, Python, Go, Lua, and JavaScript via ANSI color cod
 
 ## Requirements
 - Java 21+
-- JavaParser 3.26.3
-- ANTLR4 Runtime 4.13.2
 
 ## Installation
 

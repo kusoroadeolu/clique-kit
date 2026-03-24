@@ -30,13 +30,12 @@ Each module is published independently to Maven Central. Pull only what you need
 ### Gradle
 
 ```groovy
-implementation 'io.github.kusoroadeolu:veneer:1.0.0'
+implementation 'io.github.kusoroadeolu:veneer:1.1.0'
 ```
 
 ---
 
 ## Requirements
-
 - Java 21+ for `veneer`
 
 ---

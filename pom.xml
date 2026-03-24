@@ -12,6 +12,7 @@
     <modules>
         <module>cli-timer</module>
         <module>veneer</module>
+        <module>log4j</module>
     </modules>
 
     <name>clique-kit</name>
@@ -21,7 +22,7 @@
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <clique-core.version>3.1.0</clique-core.version>
+        <clique-core.version>3.1.1</clique-core.version>
         <clique-themes.version>1.0.0</clique-themes.version>
         <junit.version>5.11.4</junit.version>
     </properties>
