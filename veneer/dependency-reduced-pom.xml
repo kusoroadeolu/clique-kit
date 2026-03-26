@@ -3,14 +3,30 @@
   <parent>
     <artifactId>clique-kit</artifactId>
     <groupId>io.github.kusoroadeolu</groupId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>cli-timer</artifactId>
-  <name>cli-timer</name>
-  <version>1.0.0</version>
+  <artifactId>veneer</artifactId>
+  <name>veneer</name>
+  <version>1.1.0</version>
+  <description>A CLI syntax highlighting library</description>
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.13.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <visitor>true</visitor>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.6.0</version>
@@ -21,21 +37,15 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <outputFile>${project.build.directory}/cli-timer.jar</outputFile>
+              <outputFile>${project.build.directory}/veneer.jar</outputFile>
               <transformers>
                 <transformer>
-                  <mainClass>io.github.kusoroadeolu.cliquekit.timer.Main</mainClass>
+                  <mainClass>io.github.kusoroadeolu.veneer.Main</mainClass>
                 </transformer>
               </transformers>
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -61,4 +71,7 @@
       </exclusions>
     </dependency>
   </dependencies>
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+  </properties>
 </project>

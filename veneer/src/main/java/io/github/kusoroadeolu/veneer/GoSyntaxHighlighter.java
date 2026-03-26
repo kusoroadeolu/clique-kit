@@ -3,8 +3,6 @@ package io.github.kusoroadeolu.veneer;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
-import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
-import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.*;
 
@@ -13,10 +11,7 @@ import io.github.kusoroadeolu.veneer.GoLexer;
 
 import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 
-public class GoSyntaxHighlighter implements SyntaxHighlighter {
-
-    private final SyntaxTheme theme;
-    private final boolean showLineNumbers;
+public class GoSyntaxHighlighter extends AbstractSyntaxHighlighter {
 
     private static final int KEYWORD_START = 1;
     private static final int KEYWORD_END   = 26;
@@ -24,22 +19,6 @@ public class GoSyntaxHighlighter implements SyntaxHighlighter {
     private static final int NUM_START = GoLexer.DECIMAL_LIT;   // 65
     private static final int NUM_END   = GoLexer.IMAGINARY_LIT; // 72
 
-    public GoSyntaxHighlighter() {
-        this(SyntaxThemes.DEFAULT, true);
-    }
-
-    public GoSyntaxHighlighter(SyntaxTheme theme) {
-        this(theme, true);
-    }
-
-    public GoSyntaxHighlighter(boolean showLineNumbers) {
-        this(SyntaxThemes.DEFAULT, showLineNumbers);
-    }
-
-    public GoSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers) {
-        this.theme = theme;
-        this.showLineNumbers = showLineNumbers;
-    }
 
     @Override
     public String highlight(String s) {

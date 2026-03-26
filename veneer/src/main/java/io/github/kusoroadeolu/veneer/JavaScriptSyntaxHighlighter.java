@@ -1,8 +1,6 @@
 package io.github.kusoroadeolu.veneer;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
-import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
-import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
@@ -10,27 +8,7 @@ import io.github.kusoroadeolu.veneer.JavaScriptLexer;
 
 import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 
-public class JavaScriptSyntaxHighlighter implements SyntaxHighlighter{
-    private final boolean showLineNumbers;
-    private final SyntaxTheme theme;
-
-    public JavaScriptSyntaxHighlighter() {
-        this(SyntaxThemes.DEFAULT, true);
-    }
-
-    public JavaScriptSyntaxHighlighter(SyntaxTheme theme) {
-        this(theme, true);
-    }
-
-    public JavaScriptSyntaxHighlighter(boolean showLineNumbers) {
-        this(SyntaxThemes.DEFAULT, showLineNumbers);
-    }
-
-    public JavaScriptSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers) {
-        this.theme = theme;
-        this.showLineNumbers = showLineNumbers;
-    }
-
+public class JavaScriptSyntaxHighlighter extends AbstractSyntaxHighlighter{
     @Override
     public String highlight(String s) {
         if (isNullOrBlank(s)) return "";

@@ -3,8 +3,6 @@ package io.github.kusoroadeolu.veneer;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
-import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
-import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
@@ -13,29 +11,7 @@ import io.github.kusoroadeolu.veneer.PythonLexer;
 import static io.github.kusoroadeolu.veneer.utils.Constants.CAPITAL_PATTERN;
 import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 
-public class PythonSyntaxHighlighter implements SyntaxHighlighter {
-
-    private final SyntaxTheme theme;
-    private final boolean showLineNumbers;
-
-    public PythonSyntaxHighlighter() {
-        this(SyntaxThemes.DEFAULT, true);
-    }
-
-    public PythonSyntaxHighlighter(SyntaxTheme theme) {
-        this(theme, true);
-    }
-
-    public PythonSyntaxHighlighter(boolean showLineNumbers) {
-        this(SyntaxThemes.DEFAULT, showLineNumbers);
-    }
-
-
-    public PythonSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers) {
-        this.theme = theme;
-        this.showLineNumbers = showLineNumbers;
-    }
-
+public class PythonSyntaxHighlighter extends AbstractSyntaxHighlighter {
     @Override
     public String highlight(String s) {
         if (isNullOrBlank(s)) return "";
