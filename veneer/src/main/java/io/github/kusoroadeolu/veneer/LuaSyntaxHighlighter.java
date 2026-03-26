@@ -2,6 +2,7 @@ package io.github.kusoroadeolu.veneer;
 
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
+import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -13,6 +14,11 @@ import static io.github.kusoroadeolu.veneer.utils.Utils.isNullOrBlank;
 import static io.github.kusoroadeolu.veneer.utils.Utils.styleMultiLineToken;
 
 public class LuaSyntaxHighlighter extends AbstractSyntaxHighlighter{
+
+    public LuaSyntaxHighlighter() { super(); }
+    public LuaSyntaxHighlighter(boolean showLineNumbers) { super(showLineNumbers); }
+    public LuaSyntaxHighlighter(SyntaxTheme theme) { super(theme); }
+    public LuaSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers){super(theme, showLineNumbers);}
 
     @Override
     public String highlight(String s) {

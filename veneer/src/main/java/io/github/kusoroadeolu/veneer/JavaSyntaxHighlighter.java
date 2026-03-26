@@ -24,14 +24,14 @@ import static io.github.kusoroadeolu.clique.core.utils.Constants.NEWLINE;
 import static io.github.kusoroadeolu.veneer.utils.Utils.formatNoTo3dp;
 import static io.github.kusoroadeolu.veneer.utils.Utils.isNullOrBlank;
 
-public class JavaSyntaxHighlighter implements SyntaxHighlighter{
+public class JavaSyntaxHighlighter extends AbstractSyntaxHighlighter{
     private final JavaParser parser;
     private final SyntaxTheme theme;
     private final boolean showLineNumbers;
     private static final String VAR = "var";
 
     public JavaSyntaxHighlighter() {
-        this(SyntaxThemes.DEFAULT, true);
+        this(true);
     }
 
     public JavaSyntaxHighlighter(SyntaxTheme theme)  {

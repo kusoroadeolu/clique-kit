@@ -103,6 +103,7 @@ public class MyTheme implements SyntaxTheme {
 | Comments   | `# comment`                                           |
 | Annotations| `@staticmethod`, `@property`                          |
 | Methods    | Declared function names                               |
+| Types      | Return type hints (`-> int`, `-> dict`)               |
 | Constants  | Names matching `ALL_CAPS` convention                  |
 
 ### Go
@@ -124,11 +125,12 @@ public class MyTheme implements SyntaxTheme {
 ### JavaScript
 | Category   | Examples                                              |
 |------------|-------------------------------------------------------|
-| Keywords   | `const`, `let`, `function`, `class`, `async`, `await`|
+| Keywords   | `const`, `let`, `function`, `class`, `async`, `await`, `null`, `true`, `false` |
 | Strings    | `"hello"`, template literals                          |
 | Numbers    | `42`, `3.14`, `0xFF`, `100n`                          |
 | Comments   | `//`, `/* */`, JSX comments                           |
-
+| Methods    | Declared function names                               |
+| Constants  | Names matching `ALL_CAPS` convention                  |
 ---
 
 ## Known quirks

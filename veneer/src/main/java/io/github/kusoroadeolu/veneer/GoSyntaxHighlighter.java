@@ -3,6 +3,7 @@ package io.github.kusoroadeolu.veneer;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
+import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
 import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.*;
 
@@ -12,6 +13,11 @@ import io.github.kusoroadeolu.veneer.GoLexer;
 import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 
 public class GoSyntaxHighlighter extends AbstractSyntaxHighlighter {
+
+    public GoSyntaxHighlighter() { super(); }
+    public GoSyntaxHighlighter(boolean showLineNumbers) { super(showLineNumbers); }
+    public GoSyntaxHighlighter(SyntaxTheme theme) { super(theme); }
+    public GoSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers){super(theme, showLineNumbers);}
 
     private static final int KEYWORD_START = 1;
     private static final int KEYWORD_END   = 26;
