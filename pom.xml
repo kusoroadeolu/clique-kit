@@ -12,7 +12,7 @@
     <modules>
         <module>cli-timer</module>
         <module>veneer</module>
-        <module>log4j</module>
+        <module>logging</module>
     </modules>
 
     <name>clique-kit</name>

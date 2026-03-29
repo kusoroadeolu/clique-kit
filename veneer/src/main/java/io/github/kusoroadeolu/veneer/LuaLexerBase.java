@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.Lexer;
 
-public abstract class LuaLexerBase extends Lexer {
+abstract class LuaLexerBase extends Lexer {
 
     private int start_line;
     private int start_col;

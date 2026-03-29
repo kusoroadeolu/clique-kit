@@ -10,7 +10,7 @@ import io.github.kusoroadeolu.veneer.JavaScriptLexer;
  * All lexer methods that used in grammar (IsStrictMode)
  * should start with Upper Case Char similar to Lexer rules.
  */
-public abstract class JavaScriptLexerBase extends Lexer
+abstract class JavaScriptLexerBase extends Lexer
 {
     /**
      * Stores values of nested modes. By default, mode is strict or
